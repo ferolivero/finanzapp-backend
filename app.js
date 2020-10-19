@@ -11,18 +11,17 @@ var ingresosRouter = require('./routes/ingresos');
 var tarjetasRouter = require('./routes/tarjetas');
 
 var app = express();
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/categoria', categoriasRouter);
+app.use('/', indexRouter);
 app.use('/config', configsRouter);
 app.use('/gasto', gastosRouter);
-app.use('/', indexRouter);
-app.use('/informe', informesRouter);
 app.use('/ingreso', ingresosRouter);
+app.use('/categoria', categoriasRouter);
+app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);
 
 module.exports = app;
