@@ -1,16 +1,17 @@
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let express = require('express');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var categoriasRouter = require('./routes/categorias');
-var configsRouter = require('./routes/configs');
-var gastosRouter = require('./routes/gastos');
-var indexRouter = require('./routes/index');
-var informesRouter = require('./routes/informes');
-var ingresosRouter = require('./routes/ingresos');
-var tarjetasRouter = require('./routes/tarjetas');
+let categoriasRouter = require('./routes/categorias');
+let configsRouter = require('./routes/configs');
+let gastosRouter = require('./routes/gastos');
+let indexRouter = require('./routes/index');
+let informesRouter = require('./routes/informes');
+let ingresosRouter = require('./routes/ingresos');
+let tarjetasRouter = require('./routes/tarjetas');
+let inventorsRouter = require('./routes/inventors');
 
-var app = express();
+let app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -23,5 +24,22 @@ app.use('/ingreso', ingresosRouter);
 app.use('/categoria', categoriasRouter);
 app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);
+app.use('/api/inventors', inventorsRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    next(createError(404));
+  });
+
+// error handler
+app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+  
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  });
 
 module.exports = app;

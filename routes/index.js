@@ -4,10 +4,10 @@ const router = express.Router();
 const jwt = require('njwt')
 const userData = require('./../data/usersData');
 
-router.get('/token', function(req, res, next) {
+router.get('/token', async function(req, res, next) {
   // Aca deberia realizar la validacion del login
 
-  let user = userData.getUser(1);
+  let user = await userData.getUser(1);
   console.log(user);
 
   const token = jwt.create(process.env.JWT_SECRET_KEY);
