@@ -1,9 +1,30 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const dataTarjetas = require('./../data/tarjetas'); 
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+// Trae todas las tarjetas
+router.get('/', async (req, res) => {
+  res.json();
+});
+
+//Trae la tarjeta por :id
+router.get('/:id', async (req, res) =>{
+  res.json();
+});
+
+// Agrega una tarjeta
+router.post('/', async (req, res) => {
+  res.json();
+});
+
+// actualiza una tarjeta
+router.put('/:id', async (req, res) =>{
+  res.json();
+});
+
+// Elimina una tarjeta
+router.delete('/:id', async (req,res) => {
+  res.send('tarjeta eliminada');
 });
 
 module.exports = router;
