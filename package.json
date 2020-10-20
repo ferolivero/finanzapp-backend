@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
-    "deploy:keroku": "git push heroku main"
+    "deploy:keroku": "git push heroku main",
+    "logs": "heroku logs --tail -a morning-inlet-32957"
   },
   "dependencies": {
     "chalk": "^4.1.0",
