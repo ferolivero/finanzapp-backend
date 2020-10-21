@@ -11,6 +11,7 @@ let ingresosRouter = require('./routes/ingresos');
 let tarjetasRouter = require('./routes/tarjetas');
 let inventorsRouter = require('./routes/inventors');
 
+
 let app = express();
 app.use(logger('dev'));
 app.use(express.json());

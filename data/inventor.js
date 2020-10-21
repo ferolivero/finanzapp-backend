@@ -1,16 +1,16 @@
 // mongodb+srv://admin:tp2a@cluster0.uak9i.mongodb.net/sample_betp2?retryWrites=true&w=majority
 
 const fs = require('fs').promises;
-const PATHMOCINVENTORS = __dirname + '/mocInventor.json';
+//const PATHMOCINVENTORS = __dirname + '/mocInventor.json';
 const connection = require('./conexionMongo');
 
 async function readMocInventor(){
    return JSON.parse(await fs.readFile(PATHMOCINVENTORS, 'utf8'));
 }
 
-async function writeMocInventor(inventors){
-    await fs.writeFile(PATHMOCINVENTORS, JSON.stringify(inventors, null, ' '));
-}
+// async function writeMocInventor(inventors){
+//     await fs.writeFile(PATHMOCINVENTORS, JSON.stringify(inventors, null, ' '));
+// }
 
 
 async function getAllInventors(){
@@ -18,8 +18,8 @@ async function getAllInventors(){
     const connectionmongo = await connection.getConnection();
 
     const inventors = await connectionmongo
-                        .db('sample_betp2')
-                        .collection('inventors').
+                        .db('finanzapp')
+                        .collection('users').
                         find().
                         toArray();
     
