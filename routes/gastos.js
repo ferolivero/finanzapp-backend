@@ -5,7 +5,7 @@ const dataGastos = require('../data/gasto');
 
 /* Trae todos los gastos del usuario */
 router.get('/', async (req, res, next) =>{
-  res.json( await dataGastos.getAllGastos());
+  res.json( await dataGastos.getAllGastos(req.query.idUsuario));
 });
 
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario

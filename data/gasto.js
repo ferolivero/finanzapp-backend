@@ -1,13 +1,13 @@
 const fs = require('fs').promises;
 const connection = require('./conexionMongo');
 
-async function getAllGastos(){
+async function getAllGastos(idUsuario){
     const connectionmongo = await connection.getConnection();
-
     const gasto = await connectionmongo
                         .db('finanzapp')
                         .collection('movimientos')
-                        .find({ monto: { $lt: 0 } })
+                        .find({ idUsuario: idUsuario,
+                                monto: { $lt: 0 } })
                         .toArray();
     
     return gasto;
