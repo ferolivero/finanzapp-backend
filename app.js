@@ -9,6 +9,8 @@ var indexRouter = require('./routes/index');
 var informesRouter = require('./routes/informes');
 var ingresosRouter = require('./routes/ingresos');
 var tarjetasRouter = require('./routes/tarjetas');
+let inventorsRouter = require('./routes/inventors');
+
 
 var app = express();
 
@@ -24,5 +26,7 @@ app.use('/', indexRouter);
 app.use('/informe', informesRouter);
 app.use('/ingreso', ingresosRouter);
 app.use('/tarjeta', tarjetasRouter);
+app.use('/api/inventors',inventorsRouter);
+
 
 module.exports = app;
