@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
+const dataGastos = require('../data/gasto');
+
 
 /* Trae todos los gastos del usuario */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', async (req, res, next) =>{
+  res.json( await dataGastos.getAllGastos());
 });
 
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario

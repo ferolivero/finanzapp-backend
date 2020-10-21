@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
+const dataIngresos = require('../data/ingreso');
+
 
 /* Trae todos los ingresos del usuario */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', async (req, res, next) => {
+  res.json( await dataIngresos.getAllIngresos());
 });
 
 //Trae un ingreso determinado por ID, debe chequear que sea de ese usuario
