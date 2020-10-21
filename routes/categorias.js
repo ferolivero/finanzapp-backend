@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dataCategoria = require('./../data/categoria'); 
+const dataCategoria = require('./../data/categorias'); 
 
 // Trae todas las categorias
 router.get('/', async (req, res) => {
