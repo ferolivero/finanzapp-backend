@@ -8,6 +8,10 @@ router.get('/', async (req, res, next) =>{
   res.json( await dataGastos.getAllGastos(req.query.idUsuario));
 });
 
+router.get('/:collection/', async (req, res, next) =>{
+  res.json( await dataGastos.getCollection(req.params.collection));
+});
+
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario
 router.get('/:id', async (req, res) =>{
   res.send('respond with a resource');});

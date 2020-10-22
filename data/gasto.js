@@ -1,17 +1,15 @@
 const fs = require('fs').promises;
 const connection = require('./conexionMongo');
+const abm = require('./abm');
+const myCollection = 'movimientos';
 
-async function getAllGastos(idUsuario){
-    const connectionmongo = await connection.getConnection();
-    const gasto = await connectionmongo
-                        .db('finanzapp')
-                        .collection('movimientos')
-                        .find({ idUsuario: idUsuario,
-                                monto: { $lt: 0 } })
-                        .toArray();
-    
-    return gasto;
+async function getAllGastos(){
+    //ACA PODRIA IR UNA LOGICA PROPIA
+    return await abm.getCollection(myCollection);
 }
+
+
+
 
 // async function getInventor(id){
 //     // let data = await getAllInventors();
@@ -80,4 +78,4 @@ async function getAllGastos(idUsuario){
 //     return result;
 // }
 
-module.exports = {getAllGastos}
+module.exports = {getAllGastos, getCollection}
