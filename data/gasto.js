@@ -4,7 +4,7 @@ const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'movimientos';
+const myCollection = 'gastos';
 
 async function getAllGastos(){
     //ACA PODRIA IR UNA LOGICA PROPIA
@@ -36,6 +36,7 @@ async function updateGasto(gasto){
             monto: gasto.monto,
             fecha: gasto.fecha,
             fechaImputacion: gasto.fechaImputacion,
+            descripcion: gasto.descripcion,
             categoria: gasto.categoria,
             tipoPago: gasto.tipoPago            
         }
