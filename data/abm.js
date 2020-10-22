@@ -1,3 +1,4 @@
+const mongodb = require('mongodb');
 const fs = require('fs').promises;
 const connection = require('./conexionMongo');
 
@@ -17,7 +18,7 @@ async function getItem(collectionName, id){
     const item = await connectionmongo
                             .db('finanzapp')
                             .collection(collectionName)
-                            .findOne({_id: parseInt(id)});
+                            .findOne({_id: mongodb.ObjectID(id)});
     return item;
 }
 
@@ -54,7 +55,7 @@ async function deleteItem(collectionName, id){
     const result = await connectionmongo
                             .db('finanzapp')
                             .collection(collectionName)
-                            .deleteOne({_id: parseInt(id)});
+                            .deleteOne({_id: mongodb.ObjectID(id)});
     return result;
 }
 
