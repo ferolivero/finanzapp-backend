@@ -3,28 +3,33 @@ var router = express.Router();
 const dataIngresos = require('../data/ingreso');
 
 
-/* Trae todos los ingresos del usuario */
-router.get('/', async (req, res, next) => {
-  res.json( await dataIngresos.getAllIngresos(req.query.idUsuario));
+router.get('/', async (req, res, next) =>{
+  res.json( await dataIngresos.getAllingresos(req.query.idUsuario));
 });
 
-//Trae un ingreso determinado por ID, debe chequear que sea de ese usuario
+
 router.get('/:id', async (req, res) =>{
-  res.send('respond with a resource');});
+      res.json(await dataIngresos.getingreso(req.params.id));
+});
 
-// Agrega un ingreso
 router.post('/', async (req, res) => {
-  res.send('respond with a resource');
+  const ingreso = req.body;
+  await dataIngresos.pushingreso(ingreso);
+  const ingresoPersistido = await dataIngresos.getingreso(ingreso._id); 
+  res.json(ingresoPersistido);
 });
 
-// Edita un ingreso
 router.put('/:id', async (req, res) =>{
-  res.send('respond with a resource');
+  const ingreso = req.body;
+  ingreso._id = req.params.id;
+  await dataIngresos.updateingreso(ingreso);
+
+  res.json(await dataIngresos.getingreso(req.params.id))
 });
 
-// Elimina un ingreso
 router.delete('/:id', async (req,res) => {
-  res.send('respond with a resource');
+  await dataIngresos.deleteingreso(req.params.id);
+  res.send('ingreso eliminado');
 });
 
 module.exports = router;

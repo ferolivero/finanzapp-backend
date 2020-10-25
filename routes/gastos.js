@@ -8,23 +8,33 @@ router.get('/', async (req, res, next) =>{
   res.json( await dataGastos.getAllGastos(req.query.idUsuario));
 });
 
+
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario
 router.get('/:id', async (req, res) =>{
-  res.send('respond with a resource');});
+      res.json(await dataGastos.getGasto(req.params.id));
+});
 
 // Agrega un gasto
 router.post('/', async (req, res) => {
-  res.send('respond with a resource');
+  const gasto = req.body;
+  await dataGastos.pushGasto(gasto);
+  const gastoPersistido = await dataGastos.getGasto(gasto._id); 
+  res.json(gastoPersistido);
 });
 
 // Edita un gasto
 router.put('/:id', async (req, res) =>{
-  res.send('respond with a resource');
+  const gasto = req.body;
+  gasto._id = req.params.id;
+  await dataGastos.updateGasto(gasto);
+
+  res.json(await dataGastos.getGasto(req.params.id))
 });
 
 // Elimina un gasto
 router.delete('/:id', async (req,res) => {
-  res.send('respond with a resource');
+  await dataGastos.deleteGasto(req.params.id);
+  res.send('Gasto eliminado');
 });
 
 module.exports = router;
