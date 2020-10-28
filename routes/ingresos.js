@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const dataIngresos = require('../data/ingreso');
-const dataUsers = require('../data/usersData');
+const dataUsers = require('../data/user');
 
 
 //Me falta validar que exista la categoria
