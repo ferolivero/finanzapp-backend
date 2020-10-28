@@ -22,6 +22,15 @@ async function getItem(collectionName, id){
     return item;
 }
 
+async function getItemById(collectionName, id){
+    const connectionmongo = await connection.getConnection();
+    const item = await connectionmongo
+                            .db('finanzapp')
+                            .collection(collectionName)
+                            .findOne({_id: id});
+    return item;
+}
+
 async function pushItem(collectionName, item){
     const connectionmongo = await connection.getConnection();
     const result = await connectionmongo
@@ -59,4 +68,4 @@ async function deleteItem(collectionName, id){
     return result;
 }
 
-module.exports = {getCollection, getItem, pushItem, deleteItem}
+module.exports = {getCollection, getItem, getItemById, pushItem, deleteItem}

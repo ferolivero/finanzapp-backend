@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const dataGastos = require('../data/gasto');
-const dataUsers = require('../data/usersData');
+const dataUsers = require('../data/user');
 
 const tiposPago = ['Tarjeta', 'Contado'];
 //Me falta validar que exista la categoria
