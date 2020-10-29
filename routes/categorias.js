@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dataCategoria = require('../data/categoria'); 
+const authMiddleware = require('../middleware/auth');
 
 // Trae todas las categorias, validacion de prueba
 /*router.get('/', async (req, res) => {
@@ -15,12 +16,12 @@ const dataCategoria = require('../data/categoria');
 */
 
 // Trae todas las categorias
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware.auth, async (req, res) => {
   res.json( await dataCategoria.getAllCategorias(req.body.tipo));
 });
 
 //Trae la categoria por :id
-router.get('/:id', async (req, res) =>{
+router.get('/:id', authMiddleware.auth, async (req, res) =>{
   await dataCategoria.getCategoria(req.body.tipo, req.params.id);
   res.json(categoria)
 });

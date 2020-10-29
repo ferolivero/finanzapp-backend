@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const dataIngresos = require('../data/ingreso');
 const dataUsers = require('../data/user');
+const authMiddleware = require('../middleware/auth');
 
 
 //Me falta validar que exista la categoria
@@ -14,16 +15,16 @@ async function ingresoValido(ingreso){
   }
 }
 
-router.get('/', async (req, res, next) =>{
+router.get('/', authMiddleware.auth, async (req, res, next) =>{
   res.json( await dataIngresos.getAllIngresos());
 });
 
 
-router.get('/:id', async (req, res) =>{
+router.get('/:id', authMiddleware.auth, async (req, res) =>{
       res.json(await dataIngresos.getingreso(req.params.id));
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware.auth, async (req, res) => {
   const ingreso = req.body;
   //Me falta validar que exista la categoria
   if (await ingresoValido(ingreso)){
@@ -35,7 +36,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) =>{
+router.put('/:id', authMiddleware.auth, async (req, res) =>{
   const ingreso = req.body;
   //Me falta validar que exista la categoria
   if (await ingresoValido(ingreso)){
@@ -47,7 +48,7 @@ router.put('/:id', async (req, res) =>{
   }
 });
 
-router.delete('/:id', async (req,res) => {
+router.delete('/:id', authMiddleware.auth, async (req,res) => {
   await dataIngresos.deleteingreso(req.params.id);
   res.send('ingreso eliminado');
 });

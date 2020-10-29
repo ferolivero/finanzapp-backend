@@ -9,8 +9,6 @@ let indexRouter = require('./routes/index');
 let informesRouter = require('./routes/informes');
 let ingresosRouter = require('./routes/ingresos');
 let tarjetasRouter = require('./routes/tarjetas');
-let inventorsRouter = require('./routes/inventors');
-
 
 let app = express();
 app.use(logger('dev'));
@@ -36,7 +34,6 @@ app.use('/categoria',(req, res, next) =>{
 app.use('/categoria', categoriasRouter);
 app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);
-app.use('/api/inventors', inventorsRouter);
 
 
 // catch 404 and forward to error handler
