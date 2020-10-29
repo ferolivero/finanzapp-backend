@@ -8,6 +8,7 @@ let gastosRouter = require('./routes/gastos');
 let indexRouter = require('./routes/index');
 let informesRouter = require('./routes/informes');
 let ingresosRouter = require('./routes/ingresos');
+let movimientosRouter = require('./routes/movimientos');
 let tarjetasRouter = require('./routes/tarjetas');
 
 let app = express();
@@ -18,22 +19,23 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/config', configsRouter);
-app.use('/gasto', gastosRouter);
-app.use('/ingreso', ingresosRouter);
-app.use('/categoria',(req, res, next) =>{
-  const tipoCat= req.body.tipo;
-  const cat1 ="categoriasIngresos"
-  const cat2 ="categoriasGastos"
-  if (( tipoCat=== cat1) || (tipoCat === cat2)){
-    next()
-  }
-  else{
-    res.status(404).send("categoria invalida")
-   }
-})
+app.use('/movimiento/gasto', gastosRouter);
+app.use('/movimiento/ingreso', ingresosRouter);
+// app.use('/categoria',(req, res, next) =>{
+//   const tipoCat= req.body.tipo;
+//   const cat1 ="categoriasIngresos"
+//   const cat2 ="categoriasGastos"
+//   if (( tipoCat=== cat1) || (tipoCat === cat2)){
+//     next()
+//   }
+//   else{
+//     res.status(404).send("categoria invalida")
+//    }
+// })
 app.use('/categoria', categoriasRouter);
 app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);
+app.use('/movimiento', movimientosRouter);
 
 
 // catch 404 and forward to error handler

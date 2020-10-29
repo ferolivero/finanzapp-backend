@@ -16,8 +16,17 @@ const authMiddleware = require('../middleware/auth');
 */
 
 // Trae todas las categorias
-router.get('/', authMiddleware.auth, async (req, res) => {
-  res.json( await dataCategoria.getAllCategorias(req.body.tipo));
+router.get('/', /*authMiddleware.auth,*/ async (req, res) => {
+  res.json( await dataCategoria.getAllCategorias());
+});
+
+router.get('/:tipo', /*authMiddleware.auth,*/ async (req, res) => {
+  const tipos = ['gasto', 'ingreso'];
+  if (tipos.includes(req.params.tipo)){
+    res.json( await dataCategoria.getAllCategorias(req.params.tipo));
+  } else {
+    res.status(404).send("Categoria inválida");
+  }
 });
 
 //Trae la categoria por :id

@@ -4,14 +4,17 @@ const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-//const myCollection = 'categorias';
+const myCollection = 'categorias';
 
-async function getAllCategorias(myCollection){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getCollection(myCollection);
+async function getAllCategorias(tipo = null) {
+    if (tipo) {
+        return await abm.getCollection(myCollection, { tipo: tipo });
+    } else {
+        return await abm.getCollection(myCollection);
+    }
 }
 
-async function getCategoria (myCollection, id){
+async function getCategoria(myCollection, id) {
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.getItem(myCollection, id);
 }
@@ -45,4 +48,4 @@ async function updateCategoria(categoria){
     return result;
 }
 */
-module.exports = {getAllCategorias, getCategoria}//, pushCategoria, deleteCategoria, updateCategoria }
+module.exports = { getAllCategorias, getCategoria }//, pushCategoria, deleteCategoria, updateCategoria }

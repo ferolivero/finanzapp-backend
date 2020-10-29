@@ -4,16 +4,19 @@ const dataIngresos = require('../data/ingreso');
 const dataUsers = require('../data/user');
 const authMiddleware = require('../middleware/auth');
 
-
-//Me falta validar que exista la categoria
 async function ingresoValido(ingreso){
-  if (await dataUsers.getUser(ingreso.idUsuario) !== null &&
-      ingreso.monto > 0){
+  const myType = 'ingreso';
+  if (ingreso.tipo === myType &&
+      await dataUsers.getUsuario(gasto.idUsuario) !== null && 
+      gasto.monto > 0 && 
+      await dataCategorias.getAllCategorias(myType).then(data => {return data.find(x => x.nombre === ingreso.categoria)}))
+  {
     return true;
   } else {
     return false;
   }
 }
+
 
 router.get('/', authMiddleware.auth, async (req, res, next) =>{
   res.json( await dataIngresos.getAllIngresos());
@@ -26,7 +29,6 @@ router.get('/:id', authMiddleware.auth, async (req, res) =>{
 
 router.post('/', authMiddleware.auth, async (req, res) => {
   const ingreso = req.body;
-  //Me falta validar que exista la categoria
   if (await ingresoValido(ingreso)){
     await dataIngresos.pushingreso(ingreso);
     const ingresoPersistido = await dataIngresos.getingreso(ingreso._id); 
@@ -38,10 +40,9 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 
 router.put('/:id', authMiddleware.auth, async (req, res) =>{
   const ingreso = req.body;
-  //Me falta validar que exista la categoria
   if (await ingresoValido(ingreso)){
     ingreso._id = req.params.id;
-    await dataIngresos.updateingreso(ingreso);
+    await dataIngresos.updateIngreso(ingreso);
     res.json(await dataIngresos.getingreso(req.params.id))
   } else {
     res.status(500).send("Algún dato es incorrecto");
