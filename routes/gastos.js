@@ -21,17 +21,17 @@ async function gastoValido(gasto){
 }
 
 /* Trae todos los gastos del usuario */
-router.get('/', /*authMiddleware.auth,*/ async (req, res, next) =>{
+router.get('/', authMiddleware.auth, async (req, res, next) =>{
   res.json( await dataGastos.getAllGastos());
 });
 
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario
-router.get('/:id', /*authMiddleware.auth,*/ async (req, res) =>{
+router.get('/:id', authMiddleware.auth, async (req, res) =>{
       res.json(await dataGastos.getGasto(req.params.id));
 });
 
 // Agrega un gasto
-router.post('/', /*authMiddleware.auth,*/ async (req, res) => {
+router.post('/', authMiddleware.auth, async (req, res) => {
   const gasto = req.body;
   if (await gastoValido(gasto)){
     await dataGastos.pushGasto(gasto);
@@ -43,7 +43,7 @@ router.post('/', /*authMiddleware.auth,*/ async (req, res) => {
 });
 
 // Edita un gasto
-router.put('/:id', /*authMiddleware.auth,*/ async (req, res) =>{
+router.put('/:id', authMiddleware.auth, async (req, res) =>{
   const gasto = req.body;
     if (await gastoValido(gasto)){
       gasto._id = req.params.id;
@@ -55,7 +55,7 @@ router.put('/:id', /*authMiddleware.auth,*/ async (req, res) =>{
 });
 
 // Elimina un gasto
-router.delete('/:id', /*authMiddleware.auth,*/ async (req,res) => {
+router.delete('/:id', authMiddleware.auth, async (req,res) => {
   await dataGastos.deleteGasto(req.params.id);
   res.send('Gasto eliminado');
 });
