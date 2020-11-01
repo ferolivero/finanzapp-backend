@@ -20,17 +20,6 @@ app.use('/', indexRouter);
 app.use('/config', configsRouter);
 app.use('/gasto', gastosRouter);
 app.use('/ingreso', ingresosRouter);
-app.use('/categoria',(req, res, next) =>{
-  const tipoCat= req.body.tipo;
-  const cat1 ="categoriasIngresos"
-  const cat2 ="categoriasGastos"
-  if (( tipoCat=== cat1) || (tipoCat === cat2)){
-    next()
-  }
-  else{
-    res.status(404).send("categoria invalida")
-   }
-})
 app.use('/categoria', categoriasRouter);
 app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);
