@@ -13,6 +13,11 @@ async function tipoValido(tipo){
   }
 }
 // Trae todas las categorias
+
+router.get('/', authMiddleware.auth, async (req, res) => {
+  res.json( await dataCategoria.getAllCategorias());
+});
+
 router.get('/:tipo/', authMiddleware.auth, async (req, res) => {
   if (await tipoValido(req.params.tipo)){
     if(req.params.tipo === "ingreso"){

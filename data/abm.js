@@ -2,12 +2,12 @@ const mongodb = require('mongodb');
 const fs = require('fs').promises;
 const connection = require('./conexionMongo');
 
-async function getCollection(collectionName){
+async function getCollection(collectionName, filter = {}){
     const connectionmongo = await connection.getConnection();
     const collection = await connectionmongo
                         .db('finanzapp')
                         .collection(collectionName)
-                        .find()
+                        .find(filter)
                         .toArray();
     
     return collection;
@@ -19,6 +19,15 @@ async function getItem(collectionName, id){
                             .db('finanzapp')
                             .collection(collectionName)
                             .findOne({_id: mongodb.ObjectID(id)});
+    return item;
+}
+
+async function getItemByType(collectionName, id, type){
+    const connectionmongo = await connection.getConnection();
+    const item = await connectionmongo
+                            .db('finanzapp')
+                            .collection(collectionName)
+                            .findOne({_id: mongodb.ObjectID(id), tipo: type});
     return item;
 }
 
@@ -68,4 +77,4 @@ async function deleteItem(collectionName, id){
     return result;
 }
 
-module.exports = {getCollection, getItem, getItemById, pushItem, deleteItem}
+module.exports = {getCollection, getItem, getItemByType, getItemById, pushItem, deleteItem }

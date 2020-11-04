@@ -4,25 +4,22 @@ const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'ingresos';
+const myCollection = 'movimientos';
+const myType = 'ingreso';
 
 async function getAllIngresos(){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getCollection(myCollection);
+    return await abm.getCollection(myCollection, {tipo: myType});
 }
 
 async function getIngreso(id){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, id);
+    return await abm.getItemByType(myCollection, id, myType);
 }
 
 async function pushIngreso(ingreso){
-    //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.pushItem(myCollection, ingreso);
 }
 
 async function deleteIngreso(id){
-    //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.deleteItem(myCollection, id);
 }
 

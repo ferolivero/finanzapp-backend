@@ -8,6 +8,7 @@ let gastosRouter = require('./routes/gastos');
 let indexRouter = require('./routes/index');
 let informesRouter = require('./routes/informes');
 let ingresosRouter = require('./routes/ingresos');
+let movimientosRouter = require('./routes/movimientos');
 let tarjetasRouter = require('./routes/tarjetas');
 
 let app = express();
@@ -23,6 +24,7 @@ app.use('/ingreso', ingresosRouter);
 app.use('/categoria', categoriasRouter);
 app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);
+app.use('/movimiento', movimientosRouter);
 
 
 // catch 404 and forward to error handler
