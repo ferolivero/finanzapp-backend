@@ -3,38 +3,47 @@ const router = express.Router();
 const dataCategoria = require('../data/categoria'); 
 const authMiddleware = require('../middleware/auth');
 
-// Trae todas las categorias, validacion de prueba
-/*router.get('/', async (req, res) => {
-  const tipoCategoria= req.body.tipo;
-  if ((tipoCategoria == cat1) || (tipoCategoria==cat2)){
-    res.json( await dataCategoria.getAllCategorias(tipoCategoria));
-  }
-  else{
-    res.send('categoria invalida');
-  }  
-});
-*/
 
+async function tipoValido(tipo){
+  if (tipo==="gasto" || tipo ==="ingreso"){
+    return true;
+  } 
+  else {
+    return false;
+  }
+}
 // Trae todas las categorias
+
 router.get('/', authMiddleware.auth, async (req, res) => {
   res.json( await dataCategoria.getAllCategorias());
 });
 
-router.get('/:tipo', authMiddleware.auth, async (req, res) => {
-  const tipos = ['gasto', 'ingreso'];
-  if (tipos.includes(req.params.tipo)){
-    res.json( await dataCategoria.getAllCategorias(req.params.tipo));
-  } else {
-    res.status(404).send("Categoria inválida");
+router.get('/:tipo/', authMiddleware.auth, async (req, res) => {
+  if (await tipoValido(req.params.tipo)){
+    if(req.params.tipo === "ingreso"){
+      res.json( await dataCategoria.getAllCategorias("categoriasIngresos"));
+    }
+    if(req.params.tipo === "gasto"){
+      res.json( await dataCategoria.getAllCategorias("categoriasGastos"));
+    }
+  }else{
+    res.status(500).send("Tipo de categoria invalida");
   }
 });
 
 //Trae la categoria por :id
-router.get('/:id', authMiddleware.auth, async (req, res) =>{
-  await dataCategoria.getCategoria(req.body.tipo, req.params.id);
-  res.json(categoria)
+router.get('/:tipo/:id', authMiddleware.auth, async (req, res) =>{
+   if (await tipoValido(req.params.tipo)){
+    if(req.params.tipo === "ingreso"){
+      res.json( await dataCategoria.getCategoria("categoriasIngresos", req.params.id));
+    }
+    if(req.params.tipo === "gasto"){
+      res.json( await dataCategoria.getCategoria("categoriasGastos", req.params.id));
+    }
+  }else{
+    res.status(500).send("Tipo de categoria invalida");
+  }
 });
-
 
 /*
 // Agrega una categoria

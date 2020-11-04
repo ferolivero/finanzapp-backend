@@ -22,7 +22,7 @@ async function gastoValido(gasto){
 
 /* Trae todos los gastos del usuario */
 router.get('/', authMiddleware.auth, async (req, res, next) =>{
-  res.json( await dataGastos.getAllGastos());
+  res.json( await dataGastos.getAllGastos(authMiddleware.getUserFromRequest(req)));
 });
 
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario
