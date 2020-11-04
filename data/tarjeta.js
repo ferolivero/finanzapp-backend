@@ -4,41 +4,35 @@ const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'gastos';
+const myCollection = 'tarjetas';
 
-async function getAllGastos(){
+async function getAllTarjetas(){
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.getCollection(myCollection);
 }
 
-async function getGasto(id){
+async function getTarjeta(id){
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.getItem(myCollection, id);
 }
 
-async function pushGasto(gasto){
+async function pushTarjeta(tarjeta){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.pushItem(myCollection, gasto);
+    return await abm.pushItem(myCollection, tarjeta);
 }
 
-async function deleteGasto(id){
+async function deleteTarjeta(id){
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.deleteItem(myCollection, id);
 }
 
-
-//HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
-async function updateGasto(gasto){
+async function updateTarjeta(tarjeta){
     const connectionmongo = await connection.getConnection();
-    const query = {_id: mongodb.ObjectID(gasto._id)};
+    const query = {_id: parseInt(tarjeta._id)};
     const newvalues = { $set : {
-            idUsuario: gasto.idUsuario,
-            monto: gasto.monto,
-            fecha: gasto.fecha,
-            fechaImputacion: gasto.fechaImputacion,
-            descripcion: gasto.descripcion,
-            categoria: gasto.categoria,
-            tipoPago: gasto.tipoPago            
+            idUsuario: tarjeta.idUsuario,
+            nombre: tarjeta.nombre,
+            descripcion: tarjeta.descripcion
         }
     };
 
@@ -48,5 +42,4 @@ async function updateGasto(gasto){
                             .updateOne(query, newvalues);
     return result;
 }
-
-module.exports = {getAllGastos, getGasto, pushGasto, deleteGasto, updateGasto }
+module.exports = {getAllTarjetas, getTarjeta, pushTarjeta, deleteTarjeta, updateTarjeta }

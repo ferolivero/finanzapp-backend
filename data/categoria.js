@@ -4,41 +4,37 @@ const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'gastos';
+//const myCollection = 'categorias';
 
-async function getAllGastos(){
+async function getAllCategorias(myCollection){
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.getCollection(myCollection);
 }
 
-async function getGasto(id){
+async function getCategoria (myCollection, id){
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.getItem(myCollection, id);
 }
-
-async function pushGasto(gasto){
+/*
+async function pushCategoria(categoria){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.pushItem(myCollection, gasto);
+    return await abm.pushItem(myCollection, categoria);
 }
 
-async function deleteGasto(id){
+async function deleteCategoria(id){
+    .
+
     //ACA PODRIA IR UNA LOGICA PROPIA
     return await abm.deleteItem(myCollection, id);
 }
 
-
-//HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
-async function updateGasto(gasto){
+async function updateCategoria(categoria){
     const connectionmongo = await connection.getConnection();
-    const query = {_id: mongodb.ObjectID(gasto._id)};
+    const query = {_id: parseInt(categoria._id)};
     const newvalues = { $set : {
-            idUsuario: gasto.idUsuario,
-            monto: gasto.monto,
-            fecha: gasto.fecha,
-            fechaImputacion: gasto.fechaImputacion,
-            descripcion: gasto.descripcion,
-            categoria: gasto.categoria,
-            tipoPago: gasto.tipoPago            
+            idUsuario: categoria.idUsuario,
+            nombre: categoria.nombre,
+            descripcion: categoria.descripcion
         }
     };
 
@@ -48,5 +44,5 @@ async function updateGasto(gasto){
                             .updateOne(query, newvalues);
     return result;
 }
-
-module.exports = {getAllGastos, getGasto, pushGasto, deleteGasto, updateGasto }
+*/
+module.exports = {getAllCategorias, getCategoria}//, pushCategoria, deleteCategoria, updateCategoria }
