@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config();
 const mongodb = require('mongodb');
 const fs = require('fs').promises;
 const connection = require('./conexionMongo');
@@ -16,7 +17,7 @@ async function getAllCategorias(tipo = null) {
 
 async function getCategoria(myCollection, id) {
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, id);
+    return await abm.getItem(myCollection, {id: id});
 }
 /*
 async function pushCategoria(categoria){
@@ -28,7 +29,7 @@ async function deleteCategoria(id){
     .
 
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, id);
+    return await abm.deleteItem(myCollection, {id: id});
 }
 
 async function updateCategoria(categoria){
@@ -42,7 +43,7 @@ async function updateCategoria(categoria){
     };
 
     const result = await connectionmongo
-                            .db('finanzapp')
+                            .db(process.env.MONGODB_DB_NAME)
                             .collection(myCollection)
                             .updateOne(query, newvalues);
     return result;

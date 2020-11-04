@@ -1,8 +1,7 @@
+const dotenv = require('dotenv').config();
 const mongodb = require('mongodb');
-const fs = require('fs').promises;
 const connection = require('./conexionMongo');
 const abm = require('./abm');
-const e = require('express');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'movimientos';
@@ -13,7 +12,7 @@ async function getAllGastos() {
 }
 
 async function getGasto(id) {
-    return await abm.getItemByType(myCollection, id, myType);
+    return await abm.getItemByType(myCollection, {id: id, tipo: myType});
 }
 
 async function pushGasto(gasto) {
@@ -21,7 +20,7 @@ async function pushGasto(gasto) {
 }
 
 async function deleteGasto(id) {
-    return await abm.deleteItem(myCollection, id);
+    return await abm.deleteItem(myCollection, {id: id});
 }
 
 
@@ -42,7 +41,7 @@ async function updateGasto(gasto) {
     };
 
     const result = await connectionmongo
-        .db('finanzapp')
+        .db(process.env.MONGODB_DB_NAME)
         .collection(myCollection)
         .updateOne(query, newvalues);
     return result;

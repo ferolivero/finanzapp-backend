@@ -7,7 +7,7 @@ async function getUsuario(id){
     console.log(id);
     //ACA PODRIA IR UNA LOGICA PROPIA
     
-    return await abm.getItemById(myCollection, id);
+    return await abm.getItemById(myCollection, {id: id});
 }
 
 async function pushUsuario(usuario){
@@ -17,7 +17,7 @@ async function pushUsuario(usuario){
 
 async function deleteUsuario(id){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, id);
+    return await abm.deleteItem(myCollection, {id: id});
 }
 
 module.exports = {getUsuario, pushUsuario, deleteUsuario }

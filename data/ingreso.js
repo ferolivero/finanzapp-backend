@@ -1,5 +1,5 @@
+const dotenv = require('dotenv').config();
 const mongodb = require('mongodb');
-const fs = require('fs').promises;
 const connection = require('./conexionMongo');
 const abm = require('./abm');
 
@@ -12,7 +12,7 @@ async function getAllIngresos(){
 }
 
 async function getIngreso(id){
-    return await abm.getItemByType(myCollection, id, myType);
+    return await abm.getItemByType(myCollection, {id: id, tipo: myType});
 }
 
 async function pushIngreso(ingreso){
@@ -20,7 +20,7 @@ async function pushIngreso(ingreso){
 }
 
 async function deleteIngreso(id){
-    return await abm.deleteItem(myCollection, id);
+    return await abm.deleteItem(myCollection, {id: id});
 }
 
 
@@ -37,7 +37,7 @@ async function updateIngreso(ingreso){
     };
 
     const result = await connectionmongo
-                            .db('finanzapp')
+                            .db(process.env.MONGODB_DB_NAME)
                             .collection(myCollection)
                             .updateOne(query, newvalues);
     return result;

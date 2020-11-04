@@ -1,5 +1,5 @@
+const dotenv = require('dotenv').config();
 const mongodb = require('mongodb');
-const fs = require('fs').promises;
 const connection = require('./conexionMongo');
 const abm = require('./abm');
 
@@ -13,7 +13,7 @@ async function getAllTarjetas(){
 
 async function getTarjeta(id){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, id);
+    return await abm.getItem(myCollection, {id: id});
 }
 
 async function pushTarjeta(tarjeta){
@@ -23,7 +23,7 @@ async function pushTarjeta(tarjeta){
 
 async function deleteTarjeta(id){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, id);
+    return await abm.deleteItem(myCollection, {id: id});
 }
 
 async function updateTarjeta(tarjeta){
@@ -37,7 +37,7 @@ async function updateTarjeta(tarjeta){
     };
 
     const result = await connectionmongo
-                            .db('finanzapp')
+                            .db(process.env.MONGODB_DB_NAME)
                             .collection(myCollection)
                             .updateOne(query, newvalues);
     return result;
