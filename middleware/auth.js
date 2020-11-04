@@ -1,15 +1,14 @@
-const jwt = require('jsonwebtoken');
-const dataUser = require('../data/user');
 const dotenv = require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client([process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]);
 
 async function auth(req, res, next){
     try {
         if (!req.header('Authorization'))
             throw new Error('Acceso denegado')
         const token = req.header('Authorization').replace('Bearer ','');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        const user = await dataUser.getUsuario(decoded._id);
-        req.headers['user'] = user._id;
+        jwt.verify(token, process.env.JWT_SECRET_KEY);
         next();
     } catch (e) {
         res.status(401).send({error: e.message});
@@ -17,7 +16,7 @@ async function auth(req, res, next){
 }
 
 async function generateTokenAuth(user){
-    const token = jwt.sign(user, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+    const token = jwt.sign(user, process.env.JWT_SECRET_KEY); //, {expiresIn: '1h'}
     return token;
 }
 
@@ -25,4 +24,21 @@ function getUserFromRequest(req) {
     return req.headers['user'];
 }
 
-module.exports = {auth, generateTokenAuth, getUserFromRequest};
+async function verify(token) {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: [process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]
+    });
+
+    const payload = ticket.getPayload();
+    console.log({payload});
+    const userid = payload['sub'];
+
+    console.log({userid});
+    // If request specified a G Suite domain:
+    // const domain = payload['hd'];
+
+    return payload;
+}
+
+module.exports = {auth, generateTokenAuth, getUserFromRequest, verify};
