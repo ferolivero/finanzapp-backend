@@ -1,17 +1,14 @@
-const jwt = require('jsonwebtoken');
-const dataUser = require('../data/user');
 const dotenv = require('dotenv').config();
-const {OAuth2Client} = require('google-auth-library');
-const client = new OAuth2Client(['965440611676-l44ls589vsp17lf9nnok70rgbmcndjhn.apps.googleusercontent.com', '965440611676-st0f6b7mpuc25k6afr2ha1eq8k6oabf0.apps.googleusercontent.com']);
+const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client([process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]);
 
 async function auth(req, res, next){
     try {
         if (!req.header('Authorization'))
             throw new Error('Acceso denegado')
         const token = req.header('Authorization').replace('Bearer ','');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        //const user = await dataUser.getUsuario(decoded._id);
-        //req.headers['user'] = user._id;
+        jwt.verify(token, process.env.JWT_SECRET_KEY);
         next();
     } catch (e) {
         res.status(401).send({error: e.message});
@@ -28,12 +25,9 @@ function getUserFromRequest(req) {
 }
 
 async function verify(token) {
-    console.log({token});
     const ticket = await client.verifyIdToken({
         idToken: token,
-        audience: ['965440611676-l44ls589vsp17lf9nnok70rgbmcndjhn.apps.googleusercontent.com', '965440611676-st0f6b7mpuc25k6afr2ha1eq8k6oabf0.apps.googleusercontent.com'],  // Specify the CLIENT_ID of the app that accesses the backend
-        // Or, if multiple clients access the backend:
-        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        audience: [process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]
     });
 
     const payload = ticket.getPayload();
