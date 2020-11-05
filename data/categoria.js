@@ -7,17 +7,13 @@ const abm = require('./abm');
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'categorias';
 
-async function getAllCategorias(tipo = null) {
-    if (tipo) {
-        return await abm.getCollection(myCollection, { tipo: tipo });
-    } else {
-        return await abm.getCollection(myCollection);
-    }
+async function getAllCategorias(filter = {}) {
+    return await abm.getCollection(myCollection, filter);
 }
 
-async function getCategoria(myCollection, id) {
+async function getCategoria(myCollection, filter = {}) {
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, {id: id});
+    return await abm.getItem(myCollection, filter);
 }
 /*
 async function pushCategoria(categoria){

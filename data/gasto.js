@@ -5,22 +5,22 @@ const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'movimientos';
-const myType = 'gasto';
 
-async function getAllGastos() {
-    return await abm.getCollection(myCollection, {tipo: myType});
+
+async function getAllGastos(filter = {}) {
+    return await abm.getCollection(myCollection, filter);
 }
 
-async function getGasto(id) {
-    return await abm.getItemByType(myCollection, {id: id, tipo: myType});
+async function getGasto(filter = {}) {
+    return await abm.getItem(myCollection, filter);
 }
 
 async function pushGasto(gasto) {
     return await abm.pushItem(myCollection, gasto);
 }
 
-async function deleteGasto(id) {
-    return await abm.deleteItem(myCollection, {id: id});
+async function deleteGasto(filter = {}) {
+    return await abm.deleteItem(myCollection, filter);
 }
 
 
@@ -30,7 +30,7 @@ async function updateGasto(gasto) {
     const query = { _id: mongodb.ObjectID(gasto._id) };
     const newvalues = {
         $set: {
-            idUsuario: gasto.idUsuario,
+            user: gasto.user,
             monto: gasto.monto,
             fecha: gasto.fecha,
             fechaImputacion: gasto.fechaImputacion,

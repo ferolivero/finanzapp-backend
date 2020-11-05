@@ -15,19 +15,12 @@ async function getCollection(collectionName, filter = {}){
 
 async function getItem(collectionName, filter = {}){
     const connectionmongo = await connection.getConnection();
+    filter._id = mongodb.ObjectID(filter.id);
+    delete filter.id;
     const item = await connectionmongo
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(collectionName)
-                            .findOne({_id: mongodb.ObjectID(filter.id)});
-    return item;
-}
-
-async function getItemByType(collectionName, filter = {}){
-    const connectionmongo = await connection.getConnection();
-    const item = await connectionmongo
-                            .db(process.env.MONGODB_DB_NAME)
-                            .collection(collectionName)
-                            .findOne({_id: mongodb.ObjectID(filter.id), tipo: filter.tipo});
+                            .findOne(filter);
     return item;
 }
 
@@ -36,7 +29,7 @@ async function getItemById(collectionName, filter = {}){
     const item = await connectionmongo
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(collectionName)
-                            .findOne({_id: id});
+                            .findOne({_id: filter.id});
     return item;
 }
 
@@ -58,4 +51,4 @@ async function deleteItem(collectionName, filter = {}){
     return result;
 }
 
-module.exports = {getCollection, getItem, getItemByType, getItemById, pushItem, deleteItem }
+module.exports = {getCollection, getItem, getItemById, pushItem, deleteItem }

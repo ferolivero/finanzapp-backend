@@ -1,19 +1,18 @@
 const dotenv = require('dotenv').config();
-const mongodb = require('mongodb');
 const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'tarjetas';
 
-async function getAllTarjetas(){
+async function getAllTarjetas(filter = {}){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getCollection(myCollection);
+    return await abm.getCollection(myCollection, filter);
 }
 
-async function getTarjeta(id){
+async function getTarjeta(filter = {}){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, {id: id});
+    return await abm.getItem(myCollection, filter);
 }
 
 async function pushTarjeta(tarjeta){
@@ -21,16 +20,16 @@ async function pushTarjeta(tarjeta){
     return await abm.pushItem(myCollection, tarjeta);
 }
 
-async function deleteTarjeta(id){
+async function deleteTarjeta(filter = {}){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, {id: id});
+    return await abm.deleteItem(myCollection, filter);
 }
 
 async function updateTarjeta(tarjeta){
     const connectionmongo = await connection.getConnection();
     const query = {_id: parseInt(tarjeta._id)};
     const newvalues = { $set : {
-            idUsuario: tarjeta.idUsuario,
+            user: tarjeta.user,
             nombre: tarjeta.nombre,
             descripcion: tarjeta.descripcion
         }

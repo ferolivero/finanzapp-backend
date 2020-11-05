@@ -25,20 +25,19 @@ function getUserFromRequest(req) {
 }
 
 async function verify(token) {
-    const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: [process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]
-    });
-
-    const payload = ticket.getPayload();
-    console.log({payload});
-    const userid = payload['sub'];
-
-    console.log({userid});
-    // If request specified a G Suite domain:
-    // const domain = payload['hd'];
-
-    return payload;
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: [process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]
+        });
+        const payload = ticket.getPayload();
+        console.log({payload});
+        const userid = payload['sub'];
+        console.log({userid});
+        return payload;
+    } catch (error) {
+        throw new Error('Acceso denegado')
+    }
 }
 
 module.exports = {auth, generateTokenAuth, getUserFromRequest, verify};

@@ -5,41 +5,40 @@ const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'movimientos';
-const myType = 'ingreso';
 
-async function getAllIngresos(){
-    return await abm.getCollection(myCollection, {tipo: myType});
+async function getAllIngresos(filter = {}) {
+    return await abm.getCollection(myCollection, filter);
 }
 
-async function getIngreso(id){
-    return await abm.getItemByType(myCollection, {id: id, tipo: myType});
+async function getIngreso(filter = {}) {
+    return await abm.getItem(myCollection, filter);
 }
 
-async function pushIngreso(ingreso){
+async function pushIngreso(ingreso) {
     return await abm.pushItem(myCollection, ingreso);
 }
 
-async function deleteIngreso(id){
-    return await abm.deleteItem(myCollection, {id: id});
+async function deleteIngreso(filter = {}) {
+    return await abm.deleteItem(myCollection, filter);
 }
-
 
 //HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
 async function updateIngreso(ingreso){
     const connectionmongo = await connection.getConnection();
     const query = {_id: mongodb.ObjectID(ingreso._id)};
     const newvalues = { $set : {
-            idUsuario: ingreso.idUsuario,
+            user: ingreso.user,
             monto: ingreso.monto,
             fecha: ingreso.fecha,
             descripcion: ingreso.descripcion,
-            categoria: ingreso.categoria        }
+            categoria: ingreso.categoria        
+        }
     };
 
     const result = await connectionmongo
-                            .db(process.env.MONGODB_DB_NAME)
-                            .collection(myCollection)
-                            .updateOne(query, newvalues);
+        .db(process.env.MONGODB_DB_NAME)
+        .collection(myCollection)
+        .updateOne(query, newvalues);
     return result;
 }
 
