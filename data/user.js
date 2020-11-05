@@ -3,11 +3,8 @@ const abm = require('./abm');
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'users';
 
-async function getUsuario(id){
-    console.log(id);
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    
-    return await abm.getItemById(myCollection, id);
+async function getUsuario(filter = {}){
+    return await abm.getItemById(myCollection, filter);
 }
 
 async function pushUsuario(usuario){
@@ -15,9 +12,9 @@ async function pushUsuario(usuario){
     return await abm.pushItem(myCollection, usuario);
 }
 
-async function deleteUsuario(id){
+async function deleteUsuario(filter = {}){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, id);
+    return await abm.deleteItem(myCollection, filter);
 }
 
 module.exports = {getUsuario, pushUsuario, deleteUsuario }

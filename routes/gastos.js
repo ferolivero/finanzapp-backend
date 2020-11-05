@@ -1,41 +1,34 @@
 var express = require('express');
 var router = express.Router();
 const dataGastos = require('../data/gasto');
-const dataUsers = require('../data/user');
 const dataCategorias = require('../data/categoria');
 const authMiddleware = require('../middleware/auth');
-
-async function gastoValido(gasto){
-  const tiposPago = ['Tarjeta', 'Contado'];
-  const myType = 'gasto';
-  if (gasto.tipo === myType &&
-      await dataUsers.getUsuario(gasto.idUsuario) !== null && 
-      gasto.monto > 0 && 
-      tiposPago.includes(gasto.tipoPago) &&
-      await dataCategorias.getAllCategorias(myType).then(data => {return data.find(x => x.nombre === gasto.categoria)}))
-  {
-    return true;
-  } else {
-    return false;
-  }
-}
+const myType = 'gasto';
 
 /* Trae todos los gastos del usuario */
-router.get('/', authMiddleware.auth, async (req, res, next) =>{
-  res.json( await dataGastos.getAllGastos(authMiddleware.getUserFromRequest(req)));
+router.get('/', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req);
+  const result = await dataGastos.getAllGastos({user: user, tipo: myType});
+  res.json(result);
 });
 
 //Trae un gasto determinado por ID, debe chequear que sea de ese usuario
 router.get('/:id', authMiddleware.auth, async (req, res) =>{
-      res.json(await dataGastos.getGasto(req.params.id));
+  const user = authMiddleware.getUserFromRequest(req);
+  const result = await dataGastos.getGasto({id: req.params.id, user: user});
+  res.json(result);
 });
 
 // Agrega un gasto
 router.post('/', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req);
   const gasto = req.body;
-  if (await gastoValido(gasto)){
+  gasto.user = user;
+  gasto.tipo = myType;
+  
+  if (await isGastoValido(gasto)){
     await dataGastos.pushGasto(gasto);
-    const gastoPersistido = await dataGastos.getGasto(gasto._id); 
+    const gastoPersistido = await dataGastos.getGasto({id: gasto._id}); 
     res.json(gastoPersistido);
   } else {
     res.status(500).send("Algún dato es incorrecto");
@@ -44,20 +37,53 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 
 // Edita un gasto
 router.put('/:id', authMiddleware.auth, async (req, res) =>{
+  const user = authMiddleware.getUserFromRequest(req);
   const gasto = req.body;
-    if (await gastoValido(gasto)){
-      gasto._id = req.params.id;
-    await dataGastos.updateGasto(gasto);
-    res.json(await dataGastos.getGasto(req.params.id))
+  gasto.user = user;
+  gasto.tipo = myType;
+  gasto._id = req.params.id;
+  
+  const gastoDb = await dataGastos.getGasto({id: gasto._id, user: user});
+  if (gastoDb && gastoDb.user === gasto.user){
+    const isGastoValido = await isGastoValido(gasto)
+    if (isGastoValido){
+      await dataGastos.updateGasto(gasto);
+      res.json(await dataGastos.getGasto(gasto._id))
+    } else {
+      res.status(500).send("Algún dato es incorrecto");
+    }
   } else {
-    res.status(500).send("Algún dato es incorrecto");
+    res.status(403).send("Acceso denegado");
   }
 });
 
 // Elimina un gasto
 router.delete('/:id', authMiddleware.auth, async (req,res) => {
-  await dataGastos.deleteGasto(req.params.id);
-  res.send('Gasto eliminado');
+  const user = authMiddleware.getUserFromRequest(req);
+  const gastoId = req.params.id;
+  const gastoDb = await dataGastos.getGasto({id: gastoId, user: user});
+  if (gastoDb && gastoDb.user === user){
+    await dataGastos.deleteGasto({id: gastoId, user: user});
+    res.send('Gasto eliminado');
+  } else {
+    res.status(403).send("Acceso denegado");
+  }
 });
+
+async function isGastoValido(gasto){
+  const tiposPago = ['Tarjeta', 'Contado'];
+  if (gasto.monto > 0 &&  tiposPago.includes(gasto.tipoPago) &&
+      await dataCategorias.getAllCategorias({user: gasto.user, tipo: gasto.tipo})
+        .then(categorias => {
+          return categorias.find(x => x.nombre === gasto.categoria)
+        })
+      )
+  {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 module.exports = router;
