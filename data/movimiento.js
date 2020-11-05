@@ -1,9 +1,8 @@
-const fs = require('fs').promises;
 const abm = require('./abm');
 
 const myCollection = 'movimientos';
 
-async function getAllMovimientosDesc(){
+async function getAllMovimientosDesc(filter = {}){
     let movimientos = await abm.getCollection(myCollection);
     return movimientos.sort(compareDates);
 }
