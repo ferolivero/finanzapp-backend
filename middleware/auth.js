@@ -8,7 +8,8 @@ async function auth(req, res, next){
         if (!req.header('Authorization'))
             throw new Error('Acceso denegado')
         const token = req.header('Authorization').replace('Bearer ','');
-        jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        req.headers['user'] = decoded._id;
         next();
     } catch (e) {
         res.status(401).send({error: e.message});
