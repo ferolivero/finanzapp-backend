@@ -3,7 +3,7 @@ const abm = require('./abm');
 const myCollection = 'movimientos';
 
 async function getAllMovimientosDesc(filter = {}){
-    let movimientos = await abm.getCollection(myCollection);
+    let movimientos = await abm.getCollection(myCollection, filter);
     return movimientos.sort(compareDates);
 }
 

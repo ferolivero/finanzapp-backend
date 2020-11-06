@@ -5,12 +5,15 @@ const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'movimientos';
+const myType = 'ingreso'
 
 async function getAllIngresos(filter = {}) {
+    filter.tipo = myType;
     return await abm.getCollection(myCollection, filter);
 }
 
 async function getIngreso(filter = {}) {
+    filter.tipo = myType;
     return await abm.getItem(myCollection, filter);
 }
 
@@ -19,6 +22,7 @@ async function pushIngreso(ingreso) {
 }
 
 async function deleteIngreso(filter = {}) {
+    filter.tipo = myType;
     return await abm.deleteItem(myCollection, filter);
 }
 

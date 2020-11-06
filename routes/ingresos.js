@@ -8,7 +8,7 @@ const myType = 'ingreso';
 /* Trae todos los Ingresos del usuario */
 router.get('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req);
-  const result = await dataIngresos.getAllIngresos({user: user, tipo: myType});
+  const result = await dataIngresos.getAllIngresos({user: user});
   res.json(result);
 });
 
@@ -45,10 +45,10 @@ router.put('/:id', authMiddleware.auth, async (req, res) =>{
   
   const ingresoDb = await dataIngresos.getIngreso({id: ingreso._id, user: user});
   if (ingresoDb && ingresoDb.user === ingreso.user){
-    const isIngresoValido = await isIngresoValido(ingreso)
-    if (isIngresoValido){
+    const isValid = await isIngresoValido(ingreso)
+    if (isValid){
       await dataIngresos.updateIngreso(ingreso);
-      const result = await dataIngresos.getIngreso(ingreso._id);
+      const result = await dataIngresos.getIngreso({id: ingreso._id, user: user});
       res.json(result);
     } else {
       res.status(500).send("Algún dato es incorrecto");
