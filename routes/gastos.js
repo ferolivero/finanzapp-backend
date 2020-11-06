@@ -8,7 +8,7 @@ const myType = 'gasto';
 /* Trae todos los gastos del usuario */
 router.get('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req);
-  const result = await dataGastos.getAllGastos({user: user, tipo: myType});
+  const result = await dataGastos.getAllGastos({user: user});
   res.json(result);
 });
 
@@ -45,10 +45,10 @@ router.put('/:id', authMiddleware.auth, async (req, res) =>{
   
   const gastoDb = await dataGastos.getGasto({id: gasto._id, user: user});
   if (gastoDb && gastoDb.user === gasto.user){
-    const isGastoValido = await isGastoValido(gasto)
-    if (isGastoValido){
+    const isValid = await isGastoValido(gasto);
+    if (isValid){
       await dataGastos.updateGasto(gasto);
-      res.json(await dataGastos.getGasto(gasto._id))
+      res.json(await dataGastos.getGasto({id: gasto._id, user: user}))
     } else {
       res.status(500).send("Algún dato es incorrecto");
     }

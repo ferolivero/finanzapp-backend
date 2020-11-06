@@ -19,8 +19,8 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/config', configsRouter);
-app.use('/gasto', gastosRouter);
-app.use('/ingreso', ingresosRouter);
+app.use('/movimiento/gasto', gastosRouter);
+app.use('/movimiento/ingreso', ingresosRouter);
 app.use('/categoria', categoriasRouter);
 app.use('/informe', informesRouter);
 app.use('/tarjeta', tarjetasRouter);

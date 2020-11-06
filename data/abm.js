@@ -14,14 +14,19 @@ async function getCollection(collectionName, filter = {}){
 }
 
 async function getItem(collectionName, filter = {}){
-    const connectionmongo = await connection.getConnection();
-    filter._id = mongodb.ObjectID(filter.id);
-    delete filter.id;
-    const item = await connectionmongo
-                            .db(process.env.MONGODB_DB_NAME)
-                            .collection(collectionName)
-                            .findOne(filter);
-    return item;
+    try {
+        const connectionmongo = await connection.getConnection();
+        filter._id = mongodb.ObjectID(filter.id);
+        delete filter.id;
+        console.log(filter);
+        const item = await connectionmongo
+                                .db(process.env.MONGODB_DB_NAME)
+                                .collection(collectionName)
+                                .findOne(filter);
+        return item;
+    } catch (err) {
+        return null;
+    }
 }
 
 async function getItemById(collectionName, filter = {}){
