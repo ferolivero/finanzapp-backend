@@ -1,83 +1,53 @@
-const fs = require('fs').promises;
+const dotenv = require('dotenv').config();
+const mongodb = require('mongodb');
 const connection = require('./conexionMongo');
+const abm = require('./abm');
 
-async function getAllGastos(idUsuario){
-    const connectionmongo = await connection.getConnection();
-    const gasto = await connectionmongo
-                        .db('finanzapp')
-                        .collection('movimientos')
-                        .find({ idUsuario: idUsuario,
-                                monto: { $lt: 0 } })
-                        .toArray();
-    
-    return gasto;
+//ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
+const myCollection = 'movimientos';
+const myType = 'gasto';
+
+async function getAllGastos(filter = {}) {
+    filter.tipo = myType;
+    return await abm.getCollection(myCollection, filter);
 }
 
-// async function getInventor(id){
-//     // let data = await getAllInventors();
-//     // let inventor = data.inventors.find(inventor => inventor._id == id);
-//     // return  inventor;
-//     const connectionmongo = await connection.getConnection();
+async function getGasto(filter = {}) {
+    filter.tipo = myType;
+    return await abm.getItem(myCollection, filter);
+}
 
-//     const inventor = await connectionmongo
-//                             .db('sample_betp2')
-//                             .collection('inventors')
-//                             .findOne({_id: parseInt(id)});
-//     return inventor;
-// }
+async function pushGasto(gasto) {
+    return await abm.pushItem(myCollection, gasto);
+}
 
-// async function pushInventor(inventor){
-//     // let data = await getAllInventors();
-//     // data.inventors.push(inventor);
-//     // await writeMocInventor(data);
-//     const connectionmongo = await connection.getConnection();
+async function deleteGasto(filter = {}) {
+    filter.tipo = myType;
+    return await abm.deleteItem(myCollection, filter);
+}
 
-//     const result = await connectionmongo
-//                             .db('sample_betp2')
-//                             .collection('inventors')
-//                             .insertOne(inventor);
-//     return result;
-// }
 
-// async function updateInventor(inventor){
-//     // const data  = await getAllInventors();
-//     // const index = data.inventors.findIndex(value => value._id == inventor._id);
-//     // data.inventors[index].first = inventor.first;
-//     // data.inventors[index].last = inventor.last;
-//     // data.inventors[index].year = inventor.year;
-//     // data.inventors[index].img = inventor.img;
+//HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
+async function updateGasto(gasto) {
+    const connectionmongo = await connection.getConnection();
+    const query = { _id: mongodb.ObjectID(gasto._id) };
+    const newvalues = {
+        $set: {
+            user: gasto.user,
+            monto: gasto.monto,
+            fecha: gasto.fecha,
+            fechaImputacion: gasto.fechaImputacion,
+            descripcion: gasto.descripcion,
+            categoria: gasto.categoria,
+            tipoPago: gasto.tipoPago
+        }
+    };
 
-//     // await writeMocInventor(data);
-//     const connectionmongo = await connection.getConnection();
-//     const query = {_id: parseInt(inventor._id)};
-//     const newvalues = { $set : {
-//             first: inventor.first,
-//             last: inventor.last,
-//             year: inventor.year,
-//             img: inventor.img            
-//         }
-//     };
+    const result = await connectionmongo
+        .db(process.env.MONGODB_DB_NAME)
+        .collection(myCollection)
+        .updateOne(query, newvalues);
+    return result;
+}
 
-//     const result = await connectionmongo
-//                             .db('sample_betp2')
-//                             .collection('inventors')
-//                             .updateOne(query, newvalues);
-//     return result;
-// }
-
-// async function deleteInventor(id){
-//     // const data = await getAllInventors();
-//     // data.inventors.splice(
-//     //     data.inventors.findIndex(value => value._id == id), 
-//     //     1
-//     // );
-//     // await writeMocInventor(data);
-//     const connectionmongo = await connection.getConnection();
-//     const result = await connectionmongo
-//                             .db('sample_betp2')
-//                             .collection('inventors')
-//                             .deleteOne({_id: parseInt(id)});
-//     return result;
-// }
-
-module.exports = {getAllGastos}
+module.exports = { getAllGastos, getGasto, pushGasto, deleteGasto, updateGasto }
