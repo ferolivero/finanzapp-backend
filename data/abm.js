@@ -56,4 +56,13 @@ async function deleteItem(collectionName, filter = {}){
     return result;
 }
 
-module.exports = {getCollection, getItem, getItemById, pushItem, deleteItem }
+async function deleteItems(collectionName, filter = {}){
+    const connectionmongo = await connection.getConnection();
+    const result = await connectionmongo
+                            .db(process.env.MONGODB_DB_NAME)
+                            .collection(collectionName)
+                            .deleteMany(filter);
+    return result;
+}
+
+module.exports = {getCollection, getItem, getItemById, pushItem, deleteItem, deleteItems }

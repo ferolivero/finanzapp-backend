@@ -1,19 +1,19 @@
 var express = require('express');
 var router = express.Router();
-const dataIngresos = require('../data/ingreso');
+const dataIngresosRecurrentes = require('../data/ingresoRecurrente');
 const dataCategorias = require('../data/categoria');
 const authMiddleware = require('../middleware/auth');
 const myType = 'ingreso';
 
 router.get('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req);
-  const result = await dataIngresos.getAllIngresos({user: user});
+  const result = await dataIngresosRecurrentes.getAllIngresos({user: user});
   res.json(result);
 });
 
 router.get('/:id', authMiddleware.auth, async (req, res) =>{
   const user = authMiddleware.getUserFromRequest(req);
-  const result = await dataIngresos.getIngreso({id: req.params.id, user: user});
+  const result = await dataIngresosRecurrentes.getIngreso({id: req.params.id, user: user});
   res.json(result);
 });
 
@@ -24,8 +24,8 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   ingreso.tipo = myType;
   
   if (await isIngresoValido(ingreso)){
-    await dataIngresos.pushIngreso(ingreso);
-    const ingresoPersistido = await dataIngresos.getIngreso({id: ingreso._id}); 
+    await dataIngresosRecurrentes.pushIngreso(ingreso);
+    const ingresoPersistido = await dataIngresosRecurrentes.getIngreso({id: ingreso._id}); 
     res.json(ingresoPersistido);
   } else {
     res.status(500).send("Algún dato es incorrecto");
@@ -39,12 +39,12 @@ router.put('/:id', authMiddleware.auth, async (req, res) =>{
   ingreso.tipo = myType;
   ingreso._id = req.params.id;
   
-  const ingresoDb = await dataIngresos.getIngreso({id: ingreso._id, user: user});
+  const ingresoDb = await dataIngresosRecurrentes.getIngreso({id: ingreso._id, user: user});
   if (ingresoDb && ingresoDb.user === ingreso.user){
     const isValid = await isIngresoValido(ingreso)
     if (isValid){
-      await dataIngresos.updateIngreso(ingreso);
-      const result = await dataIngresos.getIngreso({id: ingreso._id, user: user});
+      await dataIngresosRecurrentes.updateIngreso(ingreso);
+      const result = await dataIngresosRecurrentes.getIngreso({id: ingreso._id, user: user});
       res.json(result);
     } else {
       res.status(500).send("Algún dato es incorrecto");
@@ -57,9 +57,9 @@ router.put('/:id', authMiddleware.auth, async (req, res) =>{
 router.delete('/:id', authMiddleware.auth, async (req,res) => {
   const user = authMiddleware.getUserFromRequest(req);
   const ingresoId = req.params.id;
-  const ingresoDb = await dataIngresos.getIngreso({id: ingresoId, user: user});
+  const ingresoDb = await dataIngresosRecurrentes.getIngreso({id: ingresoId, user: user});
   if (ingresoDb && ingresoDb.user === user){
-    await dataIngresos.deleteIngreso();
+    await dataIngresosRecurrentes.deleteIngreso();
     res.send('Ingreso eliminado');
   } else {
     res.status(403).send("Acceso denegado");

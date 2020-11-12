@@ -28,6 +28,11 @@ async function deleteGasto(filter = {}) {
   return await abm.deleteItem(myCollection, filter)
 }
 
+async function deleteGastos(filter = {}) {
+  filter.tipo = myType
+  return await abm.deleteItems(myCollection, filter)
+}
+
 //HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
 async function updateGasto(gasto) {
   const connectionmongo = await connection.getConnection()
@@ -51,4 +56,4 @@ async function updateGasto(gasto) {
   return result
 }
 
-module.exports = { getAllGastos, getGasto, pushGasto, deleteGasto, updateGasto }
+module.exports = { getAllGastos, getGasto, pushGasto, deleteGasto, deleteGastos, updateGasto }
