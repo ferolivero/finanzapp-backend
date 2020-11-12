@@ -24,8 +24,8 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   ingreso.tipo = myType;
   
   if (await isIngresoValido(ingreso)){
-    await dataIngresosRecurrentes.pushIngreso(ingreso);
-    const ingresoPersistido = await dataIngresosRecurrentes.getIngreso({id: ingreso._id}); 
+    const result = await dataIngresosRecurrentes.pushIngreso(ingreso);
+    const ingresoPersistido = await dataIngresosRecurrentes.getIngreso({id: result.insertedId}); 
     res.json(ingresoPersistido);
   } else {
     res.status(500).send("Algún dato es incorrecto");

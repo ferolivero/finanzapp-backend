@@ -12,6 +12,25 @@ router.get('/', authMiddleware.auth, async (req, res) => {
   res.json(result)
 })
 
+router.get('/no-cuotas', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  const result = await dataGastosRecurrentes.getAllGastos({
+    user: user,
+    cuotas: { $exists: false },
+  })
+  res.json(result)
+})
+
+router.get('/cuotas', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  let filter = { user: user, cuotas: { $exists: true } }
+  if (req.query.soloPendientes === true) {
+    filter.cuotasRestantes = { $gt: 0 }
+  }
+  const result = await dataGastosRecurrentes.getAllGastos(filter)
+  res.json(result)
+})
+
 router.get('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const result = await dataGastosRecurrentes.getGasto({
@@ -31,9 +50,9 @@ router.post('/', authMiddleware.auth, async (req, res) => {
     if (gasto.cuotas !== undefined) {
       gasto.cuotasRestantes = gasto.cuotas - 1
     }
-    await dataGastosRecurrentes.pushGasto(gasto)
+    const result = await dataGastosRecurrentes.pushGasto(gasto)
     const gastoPersistido = await dataGastosRecurrentes.getGasto({
-      id: gasto._id,
+      id: result.insertedId,
     })
     let gasto1 = {
       tipo: myType,
@@ -47,7 +66,7 @@ router.post('/', authMiddleware.auth, async (req, res) => {
       idRecurrente: gasto._id.toString(),
     }
     if (gasto.cuotas !== undefined) {
-      gasto1.monto = gasto.monto/gasto.cuotas
+      gasto1.monto = gasto.monto / gasto.cuotas
       gasto1.cuotaNum = 1
       gasto1.cuotaCant = gasto.cuotas
     }
