@@ -18,6 +18,7 @@ async function getIngreso(filter = {}) {
 }
 
 async function pushIngreso(ingreso) {
+    ingreso.fecha = new Date(ingreso.fecha)
     return await abm.pushItem(myCollection, ingreso);
 }
 
@@ -33,7 +34,7 @@ async function updateIngreso(ingreso){
     const newvalues = { $set : {
             user: ingreso.user,
             monto: ingreso.monto,
-            fecha: ingreso.fecha,
+            fecha: new Date(ingreso.fecha),
             descripcion: ingreso.descripcion,
             categoria: ingreso.categoria        
         }
