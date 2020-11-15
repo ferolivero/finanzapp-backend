@@ -31,6 +31,32 @@ router.get('/cuotas', authMiddleware.auth, async (req, res) => {
   res.json(result)
 })
 
+router.get('/imputar', /*authMiddleware.auth,*/ async (req, res) => {
+  //const user = authMiddleware.getUserFromRequest(req)
+  const gastosRecurrentes = await dataGastosRecurrentes.getAllGastos()
+  gastosRecurrentes.forEach(async gasto => {
+    let gastoNuevo = {
+      tipo: myType,
+      user: gasto.user,
+      monto: gasto.monto,
+      fecha: new Date(),
+      fechaImputacion: new Date(),
+      descripcion: gasto.descripcion,
+      categoria: gasto.categoria,
+      tipoPago: gasto.tipoPago,
+      idRecurrente: gasto._id.toString(),
+    }
+    if (gasto.cuotas !== undefined) {
+      gastoNuevo.monto = gasto.monto / gasto.cuotas
+      gastoNuevo.cuotaNum = gasto.cuotas - gasto.cuotasRestantes + 1
+      gastoNuevo.cuotaCant = gasto.cuotas
+    }
+    dataGastos.pushGasto(gastoNuevo)
+  });
+  const result = await dataGastosRecurrentes.updateCuota();
+  res.json(result)
+})
+
 router.get('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const result = await dataGastosRecurrentes.getGasto({
