@@ -56,14 +56,5 @@ async function updateGasto(gasto) {
   return result
 }
 
-async function imputarRecurrentes(gastos) {
-  const connectionmongo = await connection.getConnection()
-  const options = { ordered: true };
-  const result = await connectionmongo
-    .db(process.env.MONGODB_DB_NAME)
-    .collection(myCollection)
-    .insertMany(gastos, options)
-  return result
-}
 
-module.exports = { getAllGastos, getGasto, pushGasto, deleteGasto, deleteGastos, updateGasto, imputarRecurrentes }
+module.exports = { getAllGastos, getGasto, pushGasto, deleteGasto, deleteGastos, updateGasto }

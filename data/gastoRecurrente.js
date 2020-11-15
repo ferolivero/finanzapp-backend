@@ -32,7 +32,7 @@ async function deleteGasto(filter = {}) {
 
 async function updateCuota() {
   const connectionmongo = await connection.getConnection()
-  const filter = { cuotas: { $exists: true}, cuotasRestantes: { $gt: 0 }  }
+  const filter = { tipo: myType, cuotas: { $exists: true}, cuotasRestantes: { $gt: 0 }  }
   const updateDoc = {
     $inc: {
       cuotasRestantes: -1,
