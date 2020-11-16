@@ -4,7 +4,7 @@ const connection = require('./conexionMongo');
 const abm = require('./abm');
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'movimientos';
+const myCollection = 'movimientosRecurrentes';
 const myType = 'ingreso'
 
 async function getAllIngresos(filter = {}) {
