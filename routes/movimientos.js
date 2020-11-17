@@ -10,7 +10,7 @@ router.get('/', authMiddleware.auth, async (req, res) => {
   res.json(result)
 })
 
-router.get('/:mes', authMiddleware.auth, async (req, res) => {
+router.get('/mes/:mes', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   console.log('user', user)
   let mes = req.params.mes
@@ -24,6 +24,16 @@ router.get('/:mes', authMiddleware.auth, async (req, res) => {
     res.json(result)
   }
   res.status(500).send('Fecha inválida')
+})
+
+//Trae un movimiento determinado por ID, debe chequear que sea de ese usuario
+router.get('/:id', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  const result = await dataMovimientos.getMovimiento({
+    id: req.params.id,
+    user: user,
+  })
+  res.json(result)
 })
 
 function isMesValid(mes) {
