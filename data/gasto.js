@@ -1,6 +1,5 @@
 const dotenv = require('dotenv').config()
 const mongodb = require('mongodb')
-const connection = require('./conexionMongo')
 const abm = require('./abm')
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
@@ -13,43 +12,42 @@ function cargoFecha() {
   return new Date(fechaInicial.setDate(1))
 }
 
-async function getSeisMeses(filter = {}) {
+async function getSeisMeses(connection, filter = {}) {
   filter.tipo = myType
   const fechaFinal = new Date(Date.now())
   const fechaInicial = cargoFecha()
   filter.fecha = { $gte: fechaInicial, $lt: fechaFinal }
-  return await abm.getCollection(myCollection, filter)
+  return await abm.getCollection(connection, myCollection, filter)
 }
 
-async function getAllGastos(filter = {}) {
+async function getAllGastos(connection, filter = {}) {
   filter.tipo = myType
-  return await abm.getCollection(myCollection, filter)
+  return await abm.getCollection(connection, myCollection, filter)
 }
 
-async function getGasto(filter = {}) {
+async function getGasto(connection, filter = {}) {
   filter.tipo = myType
-  return await abm.getItem(myCollection, filter)
+  return await abm.getItem(connection, myCollection, filter)
 }
 
-async function pushGasto(gasto) {
+async function pushGasto(connection, gasto) {
   gasto.fecha = new Date(gasto.fecha)
   gasto.fechaImputacion = new Date(gasto.fechaImputacion)
-  return await abm.pushItem(myCollection, gasto)
+  return await abm.pushItem(connection, myCollection, gasto)
 }
 
-async function deleteGasto(filter = {}) {
+async function deleteGasto(connection, filter = {}) {
   filter.tipo = myType
-  return await abm.deleteItem(myCollection, filter)
+  return await abm.deleteItem(connection, myCollection, filter)
 }
 
-async function deleteGastos(filter = {}) {
+async function deleteGastos(connection, filter = {}) {
   filter.tipo = myType
-  return await abm.deleteItems(myCollection, filter)
+  return await abm.deleteItems(connection, myCollection, filter)
 }
 
 //HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
-async function updateGasto(gasto) {
-  const connectionmongo = await connection.getConnection()
+async function updateGasto(connection, gasto) {
   const query = { _id: mongodb.ObjectID(gasto._id) }
   const newvalues = {
     $set: {
@@ -63,11 +61,10 @@ async function updateGasto(gasto) {
     },
   }
 
-  const result = await connectionmongo
+  const result = await connection
     .db(process.env.MONGODB_DB_NAME)
     .collection(myCollection)
     .updateOne(query, newvalues)
-  await connectionmongo.close()
   return result
 }
 
