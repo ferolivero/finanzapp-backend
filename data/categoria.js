@@ -12,6 +12,12 @@ async function getCategoria(connection, myCollection, filter = {}) {
   //ACA PODRIA IR UNA LOGICA PROPIA
   return await abm.getItem(connection, myCollection, filter)
 }
+async function pushCategorias(connection, categorias){
+
+    return await abm.pushArrayItem(connection, myCollection, categorias)
+    
+}
+
 /*
 async function pushCategoria(categoria){
     //ACA PODRIA IR UNA LOGICA PROPIA
@@ -42,4 +48,4 @@ async function updateCategoria(categoria){
     return result;
 }
 */
-module.exports = { getAllCategorias, getCategoria } //, pushCategoria, deleteCategoria, updateCategoria }
+module.exports = { getAllCategorias, getCategoria , pushCategorias}//, pushCategoria, deleteCategoria, updateCategoria }
