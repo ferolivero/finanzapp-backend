@@ -2,11 +2,23 @@ const dotenv = require('dotenv').config()
 const express = require('express')
 const router = express.Router()
 const userData = require('../data/user')
-const userData = require('../data/categoria')
+const categoriaData = require('../data/categoria')
 const authMiddleware = require('./../middleware/auth')
 
-const CategoriasDefectoGasto = ["Comida","Vivienda","Servicios","Ocio","Otros"];
-const CategoriasDefectoIngreso = ["Sueldo","Venta","Servicio","Renta","Otros"];
+const CategoriasDefectoGasto = [
+  'Comida',
+  'Vivienda',
+  'Servicios',
+  'Ocio',
+  'Otros',
+]
+const CategoriasDefectoIngreso = [
+  'Sueldo',
+  'Venta',
+  'Servicio',
+  'Renta',
+  'Otros',
+]
 
 router.get('/token', async function (req, res, next) {
   try {
@@ -17,7 +29,7 @@ router.get('/token', async function (req, res, next) {
       let usuario = await userData.getUsuario(req.db, {
         id: payload.email.toString(),
       })
-      
+
       console.log(usuario)
       if (!usuario) {
         console.log('Creo el usuario en la base de datos')
@@ -26,14 +38,13 @@ router.get('/token', async function (req, res, next) {
           nombre: payload.name,
           foto: payload.picture,
           moneda: '$',
-          fechaRegistro: new Date(Date.now())
+          fechaRegistro: new Date(Date.now()),
         }
 
         await userData.pushUsuario(req.db, usuario)
-        let categoriasUser = cargarCategorias(usuario);
+        let categoriasUser = cargarCategorias(usuario)
 
-        await categoriasUser.pushCategorias(req.db,categoriasUser);
-        
+        await categoriaData.pushCategorias(req.db, categoriasUser)
       }
 
       const accessToken = await authMiddleware.generateTokenAuth(usuario)
@@ -45,32 +56,27 @@ router.get('/token', async function (req, res, next) {
   } catch (err) {
     res.status(401).send({ error: err.message })
   }
-});
+})
 
 function cargarCategorias(usuario) {
-  let categoriasGasto = CategoriasDefectoGasto.map((x)=>{
+  let categoriasGasto = CategoriasDefectoGasto.map((x) => {
     return {
-      tipo: "gasto",
+      tipo: 'gasto',
       nombre: x,
-      user: usuario._id
-      };
+      user: usuario._id,
+    }
   })
 
-  let categoriasIngreso = CategoriasDefectoIngreso.map((x)=>{
+  let categoriasIngreso = CategoriasDefectoIngreso.map((x) => {
     return {
-      tipo: "ingreso",
+      tipo: 'ingreso',
       nombre: x,
-      user: usuario._id
-      };
+      user: usuario._id,
+    }
   })
 
-  let categorias = categoriasGasto.concat(categoriasIngreso);
-  return categorias;
-
+  let categorias = categoriasGasto.concat(categoriasIngreso)
+  return categorias
 }
-
-
-
-
 
 module.exports = router
