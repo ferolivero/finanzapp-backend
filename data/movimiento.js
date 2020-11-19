@@ -14,11 +14,11 @@ async function imputarRecurrentes(movs) {
     .db(process.env.MONGODB_DB_NAME)
     .collection(myCollection)
     .insertMany(movs, options)
+  await connectionmongo.close()
   return result
 }
 
 async function getMovimiento(filter = {}) {
-  // filter.tipo = myType
   return await abm.getItem(myCollection, filter)
 }
 

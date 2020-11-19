@@ -42,6 +42,7 @@ async function updateCuota() {
     .db(process.env.MONGODB_DB_NAME)
     .collection(myCollection)
     .updateMany(filter, updateDoc)
+  await connectionmongo.close()
   return result
 }
 
