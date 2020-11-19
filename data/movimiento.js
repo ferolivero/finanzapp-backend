@@ -2,24 +2,22 @@ const abm = require('./abm')
 
 const myCollection = 'movimientos'
 
-async function getAllMovimientosDesc(filter = {}) {
-  let movimientos = await abm.getCollection(myCollection, filter)
+async function getAllMovimientosDesc(connection, filter = {}) {
+  let movimientos = await abm.getCollection(connection, myCollection, filter)
   return movimientos.sort(compareDates)
 }
 
-async function imputarRecurrentes(movs) {
-  const connectionmongo = await connection.getConnection()
+async function imputarRecurrentes(connection, movs) {
   const options = { ordered: true }
-  const result = await connectionmongo
+  const result = await connection
     .db(process.env.MONGODB_DB_NAME)
     .collection(myCollection)
     .insertMany(movs, options)
-  await connectionmongo.close()
   return result
 }
 
-async function getMovimiento(filter = {}) {
-  return await abm.getItem(myCollection, filter)
+async function getMovimiento(connection, filter = {}) {
+  return await abm.getItem(connection, myCollection, filter)
 }
 
 function compareDates(a, b) {

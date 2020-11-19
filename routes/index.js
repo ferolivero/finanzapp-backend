@@ -10,7 +10,7 @@ router.get('/token', async function (req, res, next) {
     const payload = await authMiddleware.verify(idtoken)
     console.log('email', payload.email)
     if (payload.email) {
-      let usuario = await userData.getUsuario({
+      let usuario = await userData.getUsuario(req.db, {
         id: payload.email.toString(),
       })
 
@@ -23,7 +23,7 @@ router.get('/token', async function (req, res, next) {
           foto: payload.picture,
           moneda: '$',
         }
-        await userData.pushUsuario(usuario)
+        await userData.pushUsuario(req.db, usuario)
       }
 
       const accessToken = await authMiddleware.generateTokenAuth(usuario)

@@ -1,48 +1,46 @@
-// const dotenv = require('dotenv').config()
-const mongodb = require('mongodb')
-const connection = require('./conexionMongo')
+const dotenv = require('dotenv').config()
 const abm = require('./abm')
-
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
 const myCollection = 'movimientosRecurrentes'
 const myType = 'gasto'
 
-async function getAllGastos(filter = {}) {
+async function getAllGastos(connection, filter = {}) {
   filter.tipo = myType
   console.log(filter)
-  return await abm.getCollection(myCollection, filter)
+  return await abm.getCollection(connection, myCollection, filter)
 }
 
-async function getGasto(filter = {}) {
+async function getGasto(connection, filter = {}) {
   filter.tipo = myType
-  return await abm.getItem(myCollection, filter)
+  return await abm.getItem(connection, myCollection, filter)
 }
 
-async function pushGasto(gasto) {
+async function pushGasto(connection, gasto) {
   gasto.fecha = new Date(gasto.fecha)
-  return await abm.pushItem(myCollection, gasto)
+  return await abm.pushItem(connection, myCollection, gasto)
 }
 
-async function deleteGasto(filter = {}) {
+async function deleteGasto(connection, filter = {}) {
   filter.tipo = myType
-  return await abm.deleteItem(myCollection, filter)
+  return await abm.deleteItem(connection, myCollection, filter)
 }
 
-
-async function updateCuota() {
-  const connectionmongo = await connection.getConnection()
-  const filter = { tipo: myType, cuotas: { $exists: true}, cuotasRestantes: { $gt: 0 }  }
+async function updateCuota(connection) {
+  const filter = {
+    tipo: myType,
+    cuotas: { $exists: true },
+    cuotasRestantes: { $gt: 0 },
+  }
   const updateDoc = {
     $inc: {
       cuotasRestantes: -1,
     },
-  };
-  const result = await connectionmongo
+  }
+  const result = await connection
     .db(process.env.MONGODB_DB_NAME)
     .collection(myCollection)
     .updateMany(filter, updateDoc)
-  await connectionmongo.close()
   return result
 }
 
