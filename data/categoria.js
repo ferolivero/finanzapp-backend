@@ -1,19 +1,16 @@
-const dotenv = require('dotenv').config();
-const mongodb = require('mongodb');
-const fs = require('fs').promises;
-const connection = require('./conexionMongo');
-const abm = require('./abm');
+const dotenv = require('dotenv').config()
+const abm = require('./abm')
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'categorias';
+const myCollection = 'categorias'
 
-async function getAllCategorias(filter = {}) {
-    return await abm.getCollection(myCollection, filter);
+async function getAllCategorias(connection, filter = {}) {
+  return await abm.getCollection(connection, myCollection, filter)
 }
 
-async function getCategoria(myCollection, filter = {}) {
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, filter);
+async function getCategoria(connection, myCollection, filter = {}) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.getItem(connection, myCollection, filter)
 }
 async function pushCategorias(categorias){
 

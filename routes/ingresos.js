@@ -7,13 +7,13 @@ const myType = 'ingreso'
 
 router.get('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const result = await dataIngresos.getAllIngresos({ user: user })
+  const result = await dataIngresos.getAllIngresos(req.db, { user: user })
   res.json(result)
 })
 
 router.get('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const result = await dataIngresos.getIngreso({
+  const result = await dataIngresos.getIngreso(req.db, {
     id: req.params.id,
     user: user,
   })
@@ -27,8 +27,11 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   ingreso.tipo = myType
 
   if (await isIngresoValido(ingreso)) {
-    const result = await dataIngresos.pushIngreso(ingresoLimpio(ingreso))
-    const ingresoPersistido = await dataIngresos.getIngreso({
+    const result = await dataIngresos.pushIngreso(
+      req.db,
+      ingresoLimpio(ingreso)
+    )
+    const ingresoPersistido = await dataIngresos.getIngreso(req.db, {
       id: result.insertedId,
     })
     res.json(ingresoPersistido)
@@ -44,15 +47,15 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
   ingreso.tipo = myType
   ingreso._id = req.params.id
 
-  const ingresoDb = await dataIngresos.getIngreso({
+  const ingresoDb = await dataIngresos.getIngreso(req.db, {
     id: ingreso._id,
     user: user,
   })
   if (ingresoDb && ingresoDb.user === ingreso.user) {
     const isValid = await isIngresoValido(ingreso)
     if (isValid) {
-      await dataIngresos.updateIngreso(ingreso)
-      const result = await dataIngresos.getIngreso({
+      await dataIngresos.updateIngreso(req.db, ingreso)
+      const result = await dataIngresos.getIngreso(req.db, {
         id: ingreso._id,
         user: user,
       })
@@ -68,9 +71,12 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
 router.delete('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const ingresoId = req.params.id
-  const ingresoDb = await dataIngresos.getIngreso({ id: ingresoId, user: user })
+  const ingresoDb = await dataIngresos.getIngreso(req.db, {
+    id: ingresoId,
+    user: user,
+  })
   if (ingresoDb && ingresoDb.user === user) {
-    await dataIngresos.deleteIngreso()
+    await dataIngresos.deleteIngreso(req.db, { id: ingresoId, user: user })
     res.send('Ingreso eliminado')
   } else {
     res.status(403).send('Acceso denegado')
@@ -81,7 +87,7 @@ async function isIngresoValido(ingreso) {
   if (
     ingreso.monto > 0 &&
     (await dataCategorias
-      .getAllCategorias({ user: ingreso.user, tipo: ingreso.tipo })
+      .getAllCategorias(req.db, { user: ingreso.user, tipo: ingreso.tipo })
       .then((categorias) => {
         return categorias.find((x) => x.nombre === ingreso.categoria)
       }))

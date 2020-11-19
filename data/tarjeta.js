@@ -1,44 +1,49 @@
-const dotenv = require('dotenv').config();
-const connection = require('./conexionMongo');
-const abm = require('./abm');
+const dotenv = require('dotenv').config()
+const abm = require('./abm')
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'tarjetas';
+const myCollection = 'tarjetas'
 
-async function getAllTarjetas(filter = {}){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getCollection(myCollection, filter);
+async function getAllTarjetas(connection, filter = {}) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.getCollection(connection, myCollection, filter)
 }
 
-async function getTarjeta(filter = {}){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.getItem(myCollection, filter);
+async function getTarjeta(connection, filter = {}) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.getItem(connection, myCollection, filter)
 }
 
-async function pushTarjeta(tarjeta){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.pushItem(myCollection, tarjeta);
+async function pushTarjeta(connection, tarjeta) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.pushItem(connection, myCollection, tarjeta)
 }
 
-async function deleteTarjeta(filter = {}){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, filter);
+async function deleteTarjeta(connection, filter = {}) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.deleteItem(connection, myCollection, filter)
 }
 
-async function updateTarjeta(tarjeta){
-    const connectionmongo = await connection.getConnection();
-    const query = {_id: parseInt(tarjeta._id)};
-    const newvalues = { $set : {
-            user: tarjeta.user,
-            nombre: tarjeta.nombre,
-            descripcion: tarjeta.descripcion
-        }
-    };
+async function updateTarjeta(connection, tarjeta) {
+  const query = { _id: parseInt(tarjeta._id) }
+  const newvalues = {
+    $set: {
+      user: tarjeta.user,
+      nombre: tarjeta.nombre,
+      descripcion: tarjeta.descripcion,
+    },
+  }
 
-    const result = await connectionmongo
-                            .db(process.env.MONGODB_DB_NAME)
-                            .collection(myCollection)
-                            .updateOne(query, newvalues);
-    return result;
+  const result = await connection
+    .db(process.env.MONGODB_DB_NAME)
+    .collection(myCollection)
+    .updateOne(query, newvalues)
+  return result
 }
-module.exports = {getAllTarjetas, getTarjeta, pushTarjeta, deleteTarjeta, updateTarjeta }
+module.exports = {
+  getAllTarjetas,
+  getTarjeta,
+  pushTarjeta,
+  deleteTarjeta,
+  updateTarjeta,
+}
