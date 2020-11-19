@@ -8,13 +8,9 @@ async function getAllMovimientosDesc(filter = {}) {
 }
 
 async function imputarRecurrentes(movs) {
-  const connectionmongo = await connection.getConnection()
-  const options = { ordered: true }
-  const result = await connectionmongo
-    .db(process.env.MONGODB_DB_NAME)
-    .collection(myCollection)
-    .insertMany(movs, options)
-  return result
+  
+  return await abm.pushArrayItem(myCollection,movs)
+  
 }
 
 async function getMovimiento(filter = {}) {

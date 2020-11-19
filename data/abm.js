@@ -65,4 +65,14 @@ async function deleteItems(collectionName, filter = {}){
     return result;
 }
 
-module.exports = {getCollection, getItem, getItemById, pushItem, deleteItem, deleteItems }
+async function pushArrayItem(collectionName, items){
+    const connectionmongo = await connection.getConnection();
+    const options = { ordered: true }
+    const result = await connectionmongo
+                            .db(process.env.MONGODB_DB_NAME)
+                            .collection(collectionName)
+                            .insertMany(items, options)
+    return result;
+}
+
+module.exports = {getCollection, getItem, getItemById, pushItem, pushArrayItem , deleteItem, deleteItems }
