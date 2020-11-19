@@ -7,6 +7,20 @@ const abm = require('./abm');
 const myCollection = 'movimientos';
 const myType = 'ingreso'
 
+function cargoFecha(){
+    const fechaFinal= new Date(Date.now())
+    let fechaInicial =new Date(fechaFinal.setMonth(fechaFinal.getMonth() -5 ));
+    return new Date(fechaInicial.setDate(1))
+}
+
+async function getSeisMeses(filter = {}) {
+    filter.tipo = myType;
+    const fechaFinal= new Date(Date.now())
+    const fechaInicial= cargoFecha()    
+    filter.fecha= { $gte : fechaInicial, $lt: fechaFinal }
+    return await abm.getCollection(myCollection, filter);
+}
+
 async function getAllIngresos(filter = {}) {
     filter.tipo = myType;
     return await abm.getCollection(myCollection, filter);
@@ -47,4 +61,4 @@ async function updateIngreso(ingreso){
     return result;
 }
 
-module.exports = {getAllIngresos, getIngreso, pushIngreso, deleteIngreso, updateIngreso }
+module.exports = {getSeisMeses, getAllIngresos, getIngreso, pushIngreso, deleteIngreso, updateIngreso }
