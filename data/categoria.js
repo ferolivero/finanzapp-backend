@@ -12,9 +12,9 @@ async function getCategoria(connection, myCollection, filter = {}) {
   //ACA PODRIA IR UNA LOGICA PROPIA
   return await abm.getItem(connection, myCollection, filter)
 }
-async function pushCategorias(categorias){
+async function pushCategorias(connection, categorias){
 
-    return await abm.pushArrayItem(myCollection,categorias)
+    return await abm.pushArrayItem(connection, myCollection, categorias)
     
 }
 
