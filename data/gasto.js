@@ -7,18 +7,18 @@ const abm = require('./abm')
 const myCollection = 'movimientos'
 const myType = 'gasto'
 
-function cargoFecha(){
-    const fechaFinal= new Date(Date.now())
-    let fechaInicial =new Date(fechaFinal.setMonth(fechaFinal.getMonth() -5 ));
-    return new Date(fechaInicial.setDate(1))
+function cargoFecha() {
+  const fechaFinal = new Date(Date.now())
+  let fechaInicial = new Date(fechaFinal.setMonth(fechaFinal.getMonth() - 5))
+  return new Date(fechaInicial.setDate(1))
 }
-   
+
 async function getSeisMeses(filter = {}) {
-    filter.tipo = myType;
-    const fechaFinal= new Date(Date.now())
-    const fechaInicial= cargoFecha()
-    filter.fecha= { $gte : fechaInicial, $lt: fechaFinal }
-    return await abm.getCollection(myCollection, filter);
+  filter.tipo = myType
+  const fechaFinal = new Date(Date.now())
+  const fechaInicial = cargoFecha()
+  filter.fecha = { $gte: fechaInicial, $lt: fechaFinal }
+  return await abm.getCollection(myCollection, filter)
 }
 
 async function getAllGastos(filter = {}) {
@@ -71,4 +71,12 @@ async function updateGasto(gasto) {
   return result
 }
 
-module.exports = { getAllGastos, getGasto, pushGasto, deleteGasto, deleteGastos, updateGasto, getSeisMeses }
+module.exports = {
+  getAllGastos,
+  getGasto,
+  pushGasto,
+  deleteGasto,
+  deleteGastos,
+  updateGasto,
+  getSeisMeses,
+}
