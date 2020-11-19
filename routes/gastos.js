@@ -27,8 +27,8 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   gasto.tipo = myType;
   
   if (await isGastoValido(gasto)){
-    await dataGastos.pushGasto(gasto);
-    const gastoPersistido = await dataGastos.getGasto({id: gasto._id}); 
+    const result = await dataGastos.pushGasto(gastoLimpio(gasto));
+    const gastoPersistido = await dataGastos.getGasto({id: result.insertedId}); 
     res.json(gastoPersistido);
   } else {
     res.status(500).send("Algún dato es incorrecto");
@@ -82,6 +82,19 @@ async function isGastoValido(gasto){
     return true;
   } else {
     return false;
+  }
+}
+
+function gastoLimpio(gasto) {
+  return {
+    user: gasto.user,
+    tipo: gasto.tipo,
+    monto: gasto.monto,
+    fecha: gasto.fecha,
+    fechaImputacion: gasto.fechaImputacion,
+    descripcion: gasto.descripcion || '',
+    categoria: gasto.categoria,
+    tipoPago: gasto.tipoPago
   }
 }
 
