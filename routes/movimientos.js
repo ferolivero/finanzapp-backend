@@ -6,7 +6,9 @@ const authMiddleware = require('../middleware/auth')
 router.get('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   console.log('user', user)
-  const result = await dataMovimientos.getAllMovimientosDesc({ user: user })
+  const result = await dataMovimientos.getAllMovimientosDesc(req.db, {
+    user: user,
+  })
   res.json(result)
 })
 
@@ -17,7 +19,7 @@ router.get('/mes/:mes', authMiddleware.auth, async (req, res) => {
   if (isMesValid(mes)) {
     const filterMes = filterCreatorMes(mes)
     console.log(filterMes)
-    const result = await dataMovimientos.getAllMovimientosDesc({
+    const result = await dataMovimientos.getAllMovimientosDesc(req.db, {
       user: user,
       fecha: filterMes,
     })
@@ -29,7 +31,7 @@ router.get('/mes/:mes', authMiddleware.auth, async (req, res) => {
 //Trae un movimiento determinado por ID, debe chequear que sea de ese usuario
 router.get('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const result = await dataMovimientos.getMovimiento({
+  const result = await dataMovimientos.getMovimiento(req.db, {
     id: req.params.id,
     user: user,
   })

@@ -1,30 +1,20 @@
-const abm = require('./abm');
+const abm = require('./abm')
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
-const myCollection = 'users';
+const myCollection = 'users'
 
-const CategoriasDefectoGasto = ["Comida","Vivienda","Servicios","Ocio","Otros"];
-const CategoriasDefectoIngreso = ["Sueldo","Venta","Servicio","Renta","Otros"];
-
-async function getUsuario(filter = {}){
-    return await abm.getItemById(myCollection, filter);
+async function getUsuario(connection, filter = {}) {
+  return await abm.getItemById(connection, myCollection, filter)
 }
 
-async function pushUsuario(usuario){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.pushItem(myCollection, usuario);
+async function pushUsuario(connection, usuario) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.pushItem(connection, myCollection, usuario)
 }
 
-async function deleteUsuario(filter = {}){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, filter);
+async function deleteUsuario(connection, filter = {}) {
+  //ACA PODRIA IR UNA LOGICA PROPIA
+  return await abm.deleteItem(connection, myCollection, filter)
 }
 
-
-
-
-
-
- 
-
-module.exports = {getUsuario, pushUsuario, deleteUsuario }
+module.exports = { getUsuario, pushUsuario, deleteUsuario }

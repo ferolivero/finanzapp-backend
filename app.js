@@ -1,5 +1,7 @@
 let express = require('express')
+const expressMongoDb = require('express-mongo-db')
 const cors = require('cors')
+const dotenv = require('dotenv').config()
 let cookieParser = require('cookie-parser')
 let logger = require('morgan')
 
@@ -14,6 +16,10 @@ let movimientosRouter = require('./routes/movimientos')
 let tarjetasRouter = require('./routes/tarjetas')
 
 let app = express()
+
+const uriMongodb = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_DOMAIN}/${process.env.MONGODB_DB_NAME}?retryWrites=true&w=majority`
+
+app.use(expressMongoDb(uriMongodb))
 app.use(cors())
 app.use(logger('dev'))
 app.use(express.json())

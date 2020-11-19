@@ -2,20 +2,17 @@ const abm = require('./abm')
 
 const myCollection = 'movimientos'
 
-async function getAllMovimientosDesc(filter = {}) {
-  let movimientos = await abm.getCollection(myCollection, filter)
+async function getAllMovimientosDesc(connection, filter = {}) {
+  let movimientos = await abm.getCollection(connection, myCollection, filter)
   return movimientos.sort(compareDates)
 }
 
-async function imputarRecurrentes(movs) {
-  
-  return await abm.pushArrayItem(myCollection,movs)
-  
+async function imputarRecurrentes(connection, movs) {
+  return await abm.pushArrayItem(connection, myCollection,movs)
 }
 
-async function getMovimiento(filter = {}) {
-  // filter.tipo = myType
-  return await abm.getItem(myCollection, filter)
+async function getMovimiento(connection, filter = {}) {
+  return await abm.getItem(connection, myCollection, filter)
 }
 
 function compareDates(a, b) {
