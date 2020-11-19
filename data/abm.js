@@ -57,11 +57,21 @@ async function deleteItems(connection, collectionName, filter = {}) {
   return result
 }
 
+async function pushArrayItem(connection, collectionName, items){
+    const options = { ordered: true }
+    const result = await connection
+                            .db(process.env.MONGODB_DB_NAME)
+                            .collection(collectionName)
+                            .insertMany(items, options)
+    return result;
+}
+    
 module.exports = {
   getCollection,
   getItem,
   getItemById,
   pushItem,
+  pushArrayItem,
   deleteItem,
   deleteItems,
 }
