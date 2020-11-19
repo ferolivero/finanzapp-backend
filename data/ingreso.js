@@ -58,6 +58,7 @@ async function updateIngreso(ingreso){
         .db(process.env.MONGODB_DB_NAME)
         .collection(myCollection)
         .updateOne(query, newvalues);
+    await connectionmongo.close()
     return result;
 }
 

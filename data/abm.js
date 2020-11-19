@@ -10,6 +10,7 @@ async function getCollection(collectionName, filter = {}){
                         .find(filter)
                         .toArray();
     
+    await connectionmongo.close()
     return collection;
 }
 
@@ -23,6 +24,7 @@ async function getItem(collectionName, filter = {}){
                                 .db(process.env.MONGODB_DB_NAME)
                                 .collection(collectionName)
                                 .findOne(filter);
+        await connectionmongo.close()
         return item;
     } catch (err) {
         return null;
@@ -35,6 +37,7 @@ async function getItemById(collectionName, filter = {}){
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(collectionName)
                             .findOne({_id: filter.id});
+    await connectionmongo.close()
     return item;
 }
 
@@ -44,6 +47,7 @@ async function pushItem(collectionName, item){
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(collectionName)
                             .insertOne(item);
+    await connectionmongo.close()
     return result;
 }
 
@@ -53,6 +57,7 @@ async function deleteItem(collectionName, filter = {}){
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(collectionName)
                             .deleteOne({_id: mongodb.ObjectID(filter.id)});
+    await connectionmongo.close()
     return result;
 }
 
@@ -62,6 +67,7 @@ async function deleteItems(collectionName, filter = {}){
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(collectionName)
                             .deleteMany(filter);
+    await connectionmongo.close()
     return result;
 }
 

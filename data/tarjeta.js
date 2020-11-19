@@ -39,6 +39,7 @@ async function updateTarjeta(tarjeta){
                             .db(process.env.MONGODB_DB_NAME)
                             .collection(myCollection)
                             .updateOne(query, newvalues);
+    await connectionmongo.close()
     return result;
 }
 module.exports = {getAllTarjetas, getTarjeta, pushTarjeta, deleteTarjeta, updateTarjeta }
