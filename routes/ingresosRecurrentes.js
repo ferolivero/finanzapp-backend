@@ -28,7 +28,7 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   ingreso.user = user
   ingreso.tipo = myType
 
-  if (await isIngresoValido(ingreso)) {
+  if (await isIngresoValido(req.db, ingreso)) {
     const result = await dataIngresosRecurrentes.pushIngreso(req.db, ingreso)
     const ingresoPersistido = await dataIngresosRecurrentes.getIngreso(req.db, {
       id: result.insertedId,
@@ -51,7 +51,7 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
     user: user,
   })
   if (ingresoDb && ingresoDb.user === ingreso.user) {
-    const isValid = await isIngresoValido(ingreso)
+    const isValid = await isIngresoValido(req.db, ingreso)
     if (isValid) {
       await dataIngresosRecurrentes.updateIngreso(req.db, ingreso)
       const result = await dataIngresosRecurrentes.getIngreso(req.db, {
@@ -85,11 +85,11 @@ router.delete('/:id', authMiddleware.auth, async (req, res) => {
   }
 })
 
-async function isIngresoValido(ingreso) {
+async function isIngresoValido(connection, ingreso) {
   if (
     ingreso.monto > 0 &&
     (await dataCategorias
-      .getAllCategorias(req.db, { user: ingreso.user, tipo: ingreso.tipo })
+      .getAllCategorias(connection, { user: ingreso.user, tipo: ingreso.tipo })
       .then((categorias) => {
         return categorias.find((x) => x.nombre === ingreso.categoria)
       }))

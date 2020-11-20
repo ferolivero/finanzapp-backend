@@ -29,7 +29,7 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   gasto.user = user
   gasto.tipo = myType
 
-  if (await isGastoValido(gasto)) {
+  if (await isGastoValido(req.db, gasto)) {
     const result = await dataGastos.pushGasto(req.db, gastoLimpio(gasto))
     const gastoPersistido = await dataGastos.getGasto(req.db, {
       id: result.insertedId,
@@ -53,7 +53,7 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
     user: user,
   })
   if (gastoDb && gastoDb.user === gasto.user) {
-    const isValid = await isGastoValido(gasto)
+    const isValid = await isGastoValido(req.db, gasto)
     if (isValid) {
       await dataGastos.updateGasto(req.db, gasto)
       res.json(await dataGastos.getGasto(req.db, { id: gasto._id, user: user }))
@@ -78,13 +78,13 @@ router.delete('/:id', authMiddleware.auth, async (req, res) => {
   }
 })
 
-async function isGastoValido(gasto) {
+async function isGastoValido(connection, gasto) {
   const tiposPago = ['Tarjeta', 'Contado']
   if (
     gasto.monto > 0 &&
     tiposPago.includes(gasto.tipoPago) &&
     (await dataCategorias
-      .getAllCategorias(req.db, { user: gasto.user, tipo: gasto.tipo })
+      .getAllCategorias(connection, { user: gasto.user, tipo: gasto.tipo })
       .then((categorias) => {
         return categorias.find((x) => x.nombre === gasto.categoria)
       }))

@@ -48,7 +48,7 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   gasto.user = user
   gasto.tipo = myType
 
-  if (await isGastoValido(gasto)) {
+  if (await isGastoValido(req.db, gasto)) {
     if (gasto.cuotas !== undefined) {
       gasto.cuotasRestantes = gasto.cuotas - 1
     }
