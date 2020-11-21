@@ -121,11 +121,11 @@ router.delete('/:id', authMiddleware.auth, async (req, res) => {
   }
 })
 
-async function isGastoValido(gasto) {
+async function isGastoValido(connection, gasto) {
   if (
     gasto.monto > 0 &&
     (await dataCategorias
-      .getAllCategorias(req.db, { user: gasto.user, tipo: gasto.tipo })
+      .getAllCategorias(connection, { user: gasto.user, tipo: gasto.tipo })
       .then((categorias) => {
         return categorias.find((x) => x.nombre === gasto.categoria)
       })) &&
