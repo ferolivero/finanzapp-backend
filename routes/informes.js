@@ -49,8 +49,9 @@ router.get('/gasto/:mes', authMiddleware.auth, async (req, res) => {
       nombresCategorias
     )
     res.json(resultadoPorCategoria)
+  } else {
+    res.status(500).send('Fecha inválida')
   }
-  res.status(500).send('Fecha inválida')
 })
 
 router.get('/ingreso/:mes', authMiddleware.auth, async (req, res) => {
@@ -74,8 +75,9 @@ router.get('/ingreso/:mes', authMiddleware.auth, async (req, res) => {
       nombresCategorias
     )
     res.json(resultadoPorCategoria)
+  } else {
+    res.status(500).send('Fecha inválida')
   }
-  res.status(500).send('Fecha inválida')
 })
 
 function filterCreatorMes(mes) {

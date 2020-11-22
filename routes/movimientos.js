@@ -24,8 +24,9 @@ router.get('/mes/:mes', authMiddleware.auth, async (req, res) => {
       fecha: filterMes,
     })
     res.json(result)
+  } else {
+    res.status(500).send('Fecha inválida')
   }
-  res.status(500).send('Fecha inválida')
 })
 
 //Trae un movimiento determinado por ID, debe chequear que sea de ese usuario
