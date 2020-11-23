@@ -7,6 +7,10 @@ async function getUsuario(connection, filter = {}) {
   return await abm.getItemById(connection, myCollection, filter)
 }
 
+async function getUsuarioDatos(connection, filter = {}) {
+  return await abm.getCollection(connection, myCollection, filter)
+}
+
 async function pushUsuario(connection, usuario) {
   //ACA PODRIA IR UNA LOGICA PROPIA
   return await abm.pushItem(connection, myCollection, usuario)
@@ -17,4 +21,6 @@ async function deleteUsuario(connection, filter = {}) {
   return await abm.deleteItem(connection, myCollection, filter)
 }
 
-module.exports = { getUsuario, pushUsuario, deleteUsuario }
+
+
+module.exports = { getUsuario,getUsuarioDatos, pushUsuario, deleteUsuario }

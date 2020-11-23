@@ -1,10 +1,14 @@
 var express = require('express');
 const authMiddleware = require('../middleware/auth');
 var router = express.Router();
+const userData = require('../data/user')
 
-/* GET users listing. */
-router.get('/', authMiddleware.auth, function(req, res, next) {
-  res.send('respond with a resource');
-});
+/* Trae todos los datos del usuario */
+router.get('/', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req);
+
+  const result = await userData.getUsuarioDatos(req.db, { _id: user })
+  res.json(result)
+})
 
 module.exports = router;
