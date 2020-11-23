@@ -7,25 +7,57 @@ const dataMovimientos = require('../data/movimiento')
 var router = express.Router()
 
 /* GET users listing. */
-router.get(
-  '/gasto/ultimo-seis-meses',
-  authMiddleware.auth,
-  async (req, res) => {
-    const user = authMiddleware.getUserFromRequest(req)
-    const ultimoSeis = await dataGastos.getSeisMeses(req.db, { user: user })
-    res.json(ultimoSeis)
-  }
-)
+router.get('/gasto/ultimo-seis-meses', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req);
+  const ultimoSeis = await dataGastos.getSeisMeses(req.db,{user: user});  
+  const nombreMeses= obtengoMeses()
+  const seisMeses=extraerValorPorMes(ultimoSeis,nombreMeses)
+  res.json(seisMeses)
+});
 
-router.get(
-  '/ingreso/ultimo-seis-meses',
-  authMiddleware.auth,
-  async (req, res) => {
-    const user = authMiddleware.getUserFromRequest(req)
-    const ultimoSeis = await dataIngresos.getSeisMeses(req.db, { user: user })
-    res.json(ultimoSeis)
+router.get('/ingreso/ultimo-seis-meses', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req);
+  const ultimoSeis = await dataIngresos.getSeisMeses(req.db,{user: user});  
+  const nombreMeses= obtengoMeses()
+  const seisMeses=extraerValorPorMes(ultimoSeis,nombreMeses)
+  res.json(seisMeses)
+  });
+
+function obtengoMeses(){
+  const fechaFinal= new Date(Date.now())
+  let fechaInicial =new Date()
+  fechaInicial.setMonth(fechaFinal.getMonth() -5 )
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+  let ultimosSeis=[]
+  for(;fechaInicial<=fechaFinal;){
+      ultimosSeis.push(meses[fechaInicial.getMonth()])
+      fechaInicial.setMonth((fechaInicial.getMonth()+1))
   }
-)
+  return ultimosSeis
+}
+function extraerValorPorMes(result,nombresMeses){
+  let valorDeCadaMes = [];
+  const fechaFinal= new Date(Date.now())
+  let fechaInicial =new Date()
+  fechaInicial.setMonth(fechaFinal.getMonth() -5 )
+  for(;fechaInicial.getMonth()<=fechaFinal.getMonth();){
+    let valor = 0
+    for(j=0;j<result.length;j++){
+        let fecha= result[j].fecha
+        if(fechaInicial.getMonth() == fecha.getMonth()){
+        valor = valor + result[j].monto;
+        }
+    }
+    valorDeCadaMes.push(valor) 
+    let newMes=fechaInicial.getMonth()+1
+    fechaInicial.setMonth(newMes)
+  }
+  const valorMensual = {
+    labels: nombresMeses,
+    datasets: [{data: valorDeCadaMes}]
+  }
+  return valorMensual;
+}
 
 router.get('/gasto/:mes', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
