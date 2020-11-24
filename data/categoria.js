@@ -8,7 +8,7 @@ async function getAllCategorias(connection, filter = {}) {
   return await abm.getCollection(connection, myCollection, filter)
 }
 
-async function getCategoria(connection, myCollection, filter = {}) {
+async function getCategoria(connection, filter = {}) {
   //ACA PODRIA IR UNA LOGICA PROPIA
   return await abm.getItem(connection, myCollection, filter)
 }

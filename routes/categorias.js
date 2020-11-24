@@ -36,7 +36,7 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
   if (await isTipoValido(tipo)) {
     const user = authMiddleware.getUserFromRequest(req)
     const result = await dataCategoria.getCategoria(req.db, {
-      id: id,
+      id: req.params.id,
       user: user,
       tipo: tipo,
     })
