@@ -58,6 +58,14 @@ router.get('/token', async function (req, res, next) {
   }
 })
 
+router.get('/user', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  const result = await userData.getUsuario(req.db, {
+    id: user,
+  })
+  res.json(result)
+})
+
 function cargarCategorias(usuario) {
   let categoriasGasto = CategoriasDefectoGasto.map((x) => {
     return {
