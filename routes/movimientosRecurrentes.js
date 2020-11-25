@@ -1,7 +1,6 @@
 var express = require('express')
 var router = express.Router()
 const dataMovimientosRecurrentes = require('../data/movimientoRecurrente')
-const dataGastosRecurrentes = require('../data/gastoRecurrente')
 const dataMovimientos = require('../data/movimiento')
 const authMiddleware = require('../middleware/auth')
 
@@ -15,10 +14,9 @@ router.get('/', authMiddleware.auth, async (req, res) => {
   res.json(result)
 })
 
-router.get(
-  '/generar',
-  /*authMiddleware.auth,*/ async (req, res) => {
-    //const user = authMiddleware.getUserFromRequest(req)
+router.get('/generar', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  if (user) {
     const movsRecurrentes = await dataMovimientosRecurrentes.getAllMovimientosDesc(
       req.db
     )
@@ -43,10 +41,12 @@ router.get(
       }
       return movNuevo
     })
-    dataGastosRecurrentes.updateCuota(req.db)
+    dataMovimientosRecurrentes.updateCuota(req.db)
     const result = await dataMovimientos.imputarRecurrentes(req.db, nuevosMovs)
     res.json(result)
+  } else {
+    res.status(403).send('Acceso denegado')
   }
-)
+})
 
 module.exports = router
