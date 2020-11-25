@@ -19,4 +19,4 @@ async function deleteUsuario(connection, filter = {}) {
 
 
 
-module.exports = { getUsuario,getUsuarioDatos, pushUsuario, deleteUsuario }
+module.exports = { getUsuario, pushUsuario, deleteUsuario }
