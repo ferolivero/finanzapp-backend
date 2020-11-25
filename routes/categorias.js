@@ -49,17 +49,16 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
 // Agrega una categoria
 router.post('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req) 
-  const categoria = {
+  const filter = {
     user: user,
     tipo : req.body.tipo,
     nombre : req.body.nombre
   }
-  console.log(categoria)
-  await dataCategoria.pushCategoria(req.db, categoria)
+  const result = await dataCategoria.pushCategoria(req.db, filter)
 
   const categoriaPersistida = await dataCategoria.getCategoria(
     req.db,
-    categoria._id
+    { id: result.insertedId }
   )
   res.json(categoriaPersistida)
 })
@@ -73,14 +72,14 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
   const categoriaDb = await dataCategoria.getCategoria(req.db, idCategoria)
   
   if (categoriaDb && categoriaDb.user === user) {
-    const categoria = {
+    const filter = {
       id : req.params.id,
       tipo : req.body.tipo,
       nombre : req.body.nombre,
       user : user,
     }
-    console.log(categoria)
-    await dataCategoria.updateCategoria(req.db, categoria)
+
+    await dataCategoria.updateCategoria(req.db, filter)
     const result = await dataCategoria.getCategoria(req.db, idCategoria)
     res.json(result)
   } else {
