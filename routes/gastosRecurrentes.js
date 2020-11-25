@@ -27,9 +27,6 @@ router.get('/no-cuotas', authMiddleware.auth, async (req, res) => {
 router.get('/cuotas', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   let filter = { user: user, cuotas: { $exists: true } }
-  if (req.query.soloPendientes === true) {
-    filter.cuotasRestantes = { $gt: 0 }
-  }
   const result = await dataMovimientosRecurrentes.getAllGastos(req.db, filter)
   res.json(result)
 })
@@ -131,22 +128,29 @@ router.delete('/:id', authMiddleware.auth, async (req, res) => {
 })
 
 async function isGastoValido(connection, gasto) {
+  const isCategoriaValid = await dataCategorias
+    .getAllCategorias(connection, { user: gasto.user, tipo: gasto.tipo })
+    .then((categorias) => {
+      return categorias.find((x) => x.nombre === gasto.categoria)
+    })
+
   if (
     gasto.monto > 0 &&
-    (await dataCategorias
-      .getAllCategorias(connection, { user: gasto.user, tipo: gasto.tipo })
-      .then((categorias) => {
-        return categorias.find((x) => x.nombre === gasto.categoria)
-      })) &&
-    ((gasto.tipoPago === 'Tarjeta' &&
-      ((gasto.cuotas !== undefined && gasto.cuotas > 0) ||
-        gasto.cuotas === undefined)) ||
-      gasto.tipoPago === 'Contado')
+    isCategoriaValid &&
+    (isPagoContadoValid(gasto) || isPagoTarjetaValid(gasto))
   ) {
     return true
   } else {
     return false
   }
+}
+
+function isPagoContadoValid(gasto) {
+  return gasto.tipoPago === 'Contado' && !gasto.cuotas
+}
+
+function isPagoTarjetaValid(gasto) {
+  return gasto.tipoPago === 'Tarjeta' && (!gasto.cuotas || gasto.cuotas > 0)
 }
 
 module.exports = router
