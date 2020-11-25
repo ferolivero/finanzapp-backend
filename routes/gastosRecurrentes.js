@@ -12,11 +12,7 @@ router.get('/', authMiddleware.auth, async (req, res) => {
     user: user,
   })
 
-  if (result && result.user === user) {
-    res.json(result)
-  } else {
-    res.status(403).send('Acceso denegado')
-  }
+  res.json(result)
 })
 
 router.get('/no-cuotas', authMiddleware.auth, async (req, res) => {
