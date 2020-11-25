@@ -6,14 +6,36 @@ const dataCategoria = require('../data/categoria')
 const dataMovimientos = require('../data/movimiento')
 var router = express.Router()
 
-/* GET users listing. */
+const meses = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre',
+]
+
 router.get(
   '/gasto/ultimo-seis-meses',
   authMiddleware.auth,
   async (req, res) => {
     const user = authMiddleware.getUserFromRequest(req)
-    const ultimoSeis = await dataGastos.getSeisMeses(req.db, { user: user })
-    res.json(ultimoSeis)
+    const fechaFinal = new Date(Date.now())
+    const fechaInicial = cargoFecha()
+    const filter = {
+      user: user,
+      fecha: { $gte: fechaInicial, $lt: fechaFinal },
+    }
+    const ultimoSeis = await dataGastos.getAllGastos(req.db, filter)
+    const nombreMeses = obtengoMeses()
+    const seisMeses = extraerValorPorMes(ultimoSeis, nombreMeses)
+    res.json(seisMeses)
   }
 )
 
@@ -22,10 +44,55 @@ router.get(
   authMiddleware.auth,
   async (req, res) => {
     const user = authMiddleware.getUserFromRequest(req)
-    const ultimoSeis = await dataIngresos.getSeisMeses(req.db, { user: user })
-    res.json(ultimoSeis)
+    const fechaFinal = new Date(Date.now())
+    const fechaInicial = cargoFecha()
+    const filter = {
+      user: user,
+      fecha: { $gte: fechaInicial, $lt: fechaFinal },
+    }
+    const ultimoSeis = await dataIngresos.getAllIngresos(req.db, filter)
+    const nombreMeses = obtengoMeses()
+    const seisMeses = extraerValorPorMes(ultimoSeis, nombreMeses)
+    res.json(seisMeses)
   }
 )
+
+
+function obtengoMeses() {
+  const fechaFinal = new Date(Date.now())
+  let fechaInicial = new Date()
+  fechaInicial.setMonth(fechaFinal.getMonth() - 5)
+  let ultimosSeis = []
+  for (; fechaInicial <= fechaFinal; ) {
+    ultimosSeis.push(meses[fechaInicial.getMonth()])
+    fechaInicial.setMonth(fechaInicial.getMonth() + 1)
+  }
+  return ultimosSeis
+}
+
+function extraerValorPorMes(result, nombresMeses) {
+  result = result.map((item) => {
+    let newItem = item;
+    newItem.fecha = meses[new Date(item.fecha).getMonth()];
+    return newItem;
+  });
+  let valorDeCadaMes = [];
+  nombresMeses.forEach((mes) => {
+    let sum = 0;
+    result
+      .filter((x) => x.fecha === mes)
+      .forEach((mov) => {
+        sum += mov.monto;
+      });
+    valorDeCadaMes.push(sum);
+  });
+
+  const valorCategorias = {
+    labels: nombresMeses,
+    datasets: [{ data: valorDeCadaMes }],
+  };
+  return valorCategorias;
+}
 
 router.get('/gasto/:mes', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
@@ -49,8 +116,9 @@ router.get('/gasto/:mes', authMiddleware.auth, async (req, res) => {
       nombresCategorias
     )
     res.json(resultadoPorCategoria)
+  } else {
+    res.status(500).send('Fecha inválida')
   }
-  res.status(500).send('Fecha inválida')
 })
 
 router.get('/ingreso/:mes', authMiddleware.auth, async (req, res) => {
@@ -74,8 +142,9 @@ router.get('/ingreso/:mes', authMiddleware.auth, async (req, res) => {
       nombresCategorias
     )
     res.json(resultadoPorCategoria)
+  } else {
+    res.status(500).send('Fecha inválida')
   }
-  res.status(500).send('Fecha inválida')
 })
 
 function filterCreatorMes(mes) {
@@ -119,5 +188,11 @@ function extraerValorPorCategoria(result, nombresCategorias) {
   }
   return valorCategorias
 }
+function cargoFecha() {
+  const fechaFinal = new Date(Date.now())
+  let fechaInicial = new Date(fechaFinal.setMonth(fechaFinal.getMonth() - 5))
+  return new Date(fechaInicial.setDate(1))
+}
+
 
 module.exports = router
