@@ -63,27 +63,34 @@ router.post('/', authMiddleware.auth, async (req, res) => {
       gasto.cuotasRestantes = gasto.cuotas - 1
     }
     const result = await dataMovimientosRecurrentes.pushGasto(req.db, gasto)
-    const gastoPersistido = await dataMovimientosRecurrentes.getGasto(req.db, {
-      id: result.insertedId,
-    })
-    let gasto1 = {
-      tipo: myType,
-      user: user,
-      monto: gasto.monto,
-      fecha: gasto.fecha,
-      fechaImputacion: gasto.fecha,
-      descripcion: gasto.descripcion,
-      categoria: gasto.categoria,
-      tipoPago: gasto.tipoPago,
-      idRecurrente: gasto._id.toString(),
+    if (result) {
+      const gastoPersistido = await dataMovimientosRecurrentes.getGasto(
+        req.db,
+        {
+          id: result.insertedId,
+        }
+      )
+      let gasto1 = {
+        tipo: myType,
+        user: user,
+        monto: gasto.monto,
+        fecha: gasto.fecha,
+        fechaImputacion: gasto.fecha,
+        descripcion: gasto.descripcion,
+        categoria: gasto.categoria,
+        tipoPago: gasto.tipoPago,
+        idRecurrente: gasto._id.toString(),
+      }
+      if (gasto.cuotas !== undefined) {
+        gasto1.monto = gasto.monto / gasto.cuotas
+        gasto1.cuotaNum = 1
+        gasto1.cuotaCant = gasto.cuotas
+      }
+      dataGastos.pushGasto(req.db, gasto1)
+      res.json(gastoPersistido)
+    } else {
+      res.status(500).send('No se pudo insertar el gasto recurrente')
     }
-    if (gasto.cuotas !== undefined) {
-      gasto1.monto = gasto.monto / gasto.cuotas
-      gasto1.cuotaNum = 1
-      gasto1.cuotaCant = gasto.cuotas
-    }
-    dataGastos.pushGasto(req.db, gasto1)
-    res.json(gastoPersistido)
   } else {
     res.status(500).send('Algún dato es incorrecto')
   }

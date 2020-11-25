@@ -40,7 +40,11 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
       user: user,
       tipo: tipo,
     })
-    res.json(result)
+    if (result && result.user === user) {
+      res.json(result)
+    } else {
+      res.status(403).send('Acceso denegado')
+    }
   } else {
     res.status(500).send('Tipo de categoria invalida')
   }
@@ -48,18 +52,17 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
 
 // Agrega una categoria
 router.post('/', authMiddleware.auth, async (req, res) => {
-  const user = authMiddleware.getUserFromRequest(req) 
+  const user = authMiddleware.getUserFromRequest(req)
   const filter = {
     user: user,
-    tipo : req.body.tipo,
-    nombre : req.body.nombre
+    tipo: req.body.tipo,
+    nombre: req.body.nombre,
   }
   const result = await dataCategoria.pushCategoria(req.db, filter)
 
-  const categoriaPersistida = await dataCategoria.getCategoria(
-    req.db,
-    { id: result.insertedId }
-  )
+  const categoriaPersistida = await dataCategoria.getCategoria(req.db, {
+    id: result.insertedId,
+  })
   res.json(categoriaPersistida)
 })
 
@@ -67,16 +70,16 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 router.put('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const idCategoria = {
-    id :req.params.id
+    id: req.params.id,
   }
   const categoriaDb = await dataCategoria.getCategoria(req.db, idCategoria)
-  
+
   if (categoriaDb && categoriaDb.user === user) {
     const filter = {
-      id : req.params.id,
-      tipo : req.body.tipo,
-      nombre : req.body.nombre,
-      user : user,
+      id: req.params.id,
+      tipo: req.body.tipo,
+      nombre: req.body.nombre,
+      user: user,
     }
 
     await dataCategoria.updateCategoria(req.db, filter)

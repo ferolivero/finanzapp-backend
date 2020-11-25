@@ -17,7 +17,12 @@ router.get('/:id', authMiddleware.auth, async (req, res) => {
     id: req.params.id,
     user: user,
   })
-  res.json(result)
+
+  if (result && result.user === user) {
+    res.json(result)
+  } else {
+    res.status(403).send('Acceso denegado')
+  }
 })
 
 router.post('/', authMiddleware.auth, async (req, res) => {

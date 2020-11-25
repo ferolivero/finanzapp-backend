@@ -168,25 +168,25 @@ function extraerNombresCategorias(categorias) {
   return nombres
 }
 
-//result Tiene todos los movimientos filtro por user y por tipo
-//nombresCategorias tiene todas las categorias del Usuario
 function extraerValorPorCategoria(result, nombresCategorias) {
   let valorDeCadaCategoria = []
-  for (i = 0; i < nombresCategorias.length; i++) {
-    valor = 0
-    for (j = 0; j < result.length; j++) {
-      if (nombresCategorias[i] == result[j].categoria) {
-        valor = valor + result[j].monto
-      }
-    }
-    valorDeCadaCategoria.push(valor)
-  }
+  nombresCategorias.forEach((categoria) => {
+    let sum = 0
+    result
+      .filter((x) => x.categoria === categoria)
+      .forEach((mov) => {
+        sum += mov.monto
+      })
+    valorDeCadaCategoria.push(sum)
+  })
+
   const valorCategorias = {
     labels: nombresCategorias,
     datasets: [{ data: valorDeCadaCategoria }],
   }
   return valorCategorias
 }
+
 function cargoFecha() {
   const fechaFinal = new Date(Date.now())
   let fechaInicial = new Date(fechaFinal.setMonth(fechaFinal.getMonth() - 5))
