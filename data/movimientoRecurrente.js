@@ -26,8 +26,7 @@ async function deleteIngreso(connection, filter = {}) {
   return await abm.deleteItem(connection, myCollection, filter)
 }
 
-//HASTA NUEVO AVISO, EL EDIT LO MANEJAMOS INDIVIDUALMENTE
-async function updateIngreso(connection, ingreso) {
+async function updateIngresoRecurrente(connection, ingreso) {
   const query = { _id: mongodb.ObjectID(ingreso._id) }
   const newvalues = {
     $set: {
@@ -116,7 +115,7 @@ module.exports = {
   getIngreso,
   pushIngreso,
   deleteIngreso,
-  updateIngreso,
+  updateIngresoRecurrente,
   getAllGastos,
   getGasto,
   pushGasto,

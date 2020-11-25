@@ -56,7 +56,7 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
   if (ingresoDb && ingresoDb.user === ingreso.user) {
     const isValid = await isIngresoValido(req.db, ingreso)
     if (isValid) {
-      await dataMovimientosRecurrentes.updateIngreso(req.db, ingreso)
+      await dataMovimientosRecurrentes.updateIngresoRecurrente(req.db, ingreso)
       const result = await dataMovimientosRecurrentes.getIngreso(req.db, {
         id: ingreso._id,
         user: user,
