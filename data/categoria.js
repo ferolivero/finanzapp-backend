@@ -25,9 +25,9 @@ async function pushCategoria(connection ,categoria){
     return await abm.pushItem(connection , myCollection, categoria);
 }
 
-async function deleteCategoria(id){
+async function deleteCategoria(connection, filter = {}){
     //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(myCollection, {id: id});
+    return await abm.deleteItem(connection, myCollection, filter);
 }
 
 async function updateCategoria(connection, categoria){
