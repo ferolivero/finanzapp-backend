@@ -22,7 +22,7 @@ const meses = [
 ]
 
 router.get(
-  '/gasto/ultimo-seis-meses',
+  '/gasto/ultimos-seis-meses',
   authMiddleware.auth,
   async (req, res) => {
     const user = authMiddleware.getUserFromRequest(req)
@@ -40,7 +40,7 @@ router.get(
 )
 
 router.get(
-  '/ingreso/ultimo-seis-meses',
+  '/ingreso/ultimos-seis-meses',
   authMiddleware.auth,
   async (req, res) => {
     const user = authMiddleware.getUserFromRequest(req)
@@ -57,7 +57,6 @@ router.get(
   }
 )
 
-
 function obtengoMeses() {
   const fechaFinal = new Date(Date.now())
   let fechaInicial = new Date()
@@ -72,26 +71,26 @@ function obtengoMeses() {
 
 function extraerValorPorMes(result, nombresMeses) {
   result = result.map((item) => {
-    let newItem = item;
-    newItem.fecha = meses[new Date(item.fecha).getMonth()];
-    return newItem;
-  });
-  let valorDeCadaMes = [];
+    let newItem = item
+    newItem.fecha = meses[new Date(item.fecha).getMonth()]
+    return newItem
+  })
+  let valorDeCadaMes = []
   nombresMeses.forEach((mes) => {
-    let sum = 0;
+    let sum = 0
     result
       .filter((x) => x.fecha === mes)
       .forEach((mov) => {
-        sum += mov.monto;
-      });
-    valorDeCadaMes.push(sum);
-  });
+        sum += mov.monto
+      })
+    valorDeCadaMes.push(sum)
+  })
 
   const valorCategorias = {
     labels: nombresMeses,
     datasets: [{ data: valorDeCadaMes }],
-  };
-  return valorCategorias;
+  }
+  return valorCategorias
 }
 
 router.get('/gasto/:mes', authMiddleware.auth, async (req, res) => {
@@ -193,6 +192,5 @@ function cargoFecha() {
   let fechaInicial = new Date(fechaFinal.setMonth(fechaFinal.getMonth() - 5))
   return new Date(fechaInicial.setDate(1))
 }
-
 
 module.exports = router
