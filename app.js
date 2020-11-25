@@ -16,10 +16,9 @@ let informesRouter = require('./routes/informes')
 let ingresosRouter = require('./routes/ingresos')
 let movimientosRouter = require('./routes/movimientos')
 let tarjetasRouter = require('./routes/tarjetas')
+const uriMongodb = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_DOMAIN}/${process.env.MONGODB_DB_NAME}?retryWrites=true&w=majority`
 
 let app = express()
-
-const uriMongodb = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_DOMAIN}/${process.env.MONGODB_DB_NAME}?retryWrites=true&w=majority`
 
 app.use(expressMongoDb(uriMongodb))
 app.use(cors())

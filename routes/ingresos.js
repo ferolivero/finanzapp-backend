@@ -103,7 +103,7 @@ function ingresoLimpio(ingreso) {
     user: ingreso.user,
     tipo: ingreso.tipo,
     monto: ingreso.monto,
-    fecha: ingreso.fecha,
+    fecha: ingreso.fecha || new Date(),
     descripcion: ingreso.descripcion || '',
     categoria: ingreso.categoria,
   }
