@@ -66,13 +66,18 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
 })
 
 // Elimina una tarjeta
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const tarjetaId = req.params.id
-  const tarjetaDb = await dataTarjeta.getTarjeta(req.db, {
+  console.log({ tarjetaId })
+  const filter = {
     id: tarjetaId,
     user: user,
-  })
+  }
+  console.log({ filter })
+  const tarjetaDb = await dataTarjeta.getTarjeta(req.db, filter)
+
+  console.log({ tarjetaDb })
   if (tarjetaDb && tarjetaDb.user === user) {
     await dataTarjeta.deleteTarjeta(req.db, { id: tarjetaId, user: user })
     res.send('Tarjeta eliminada')
