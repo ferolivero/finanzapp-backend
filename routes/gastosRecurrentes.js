@@ -114,8 +114,16 @@ router.delete('/:id', authMiddleware.auth, async (req, res) => {
   })
   if (gastoDb && gastoDb.user === user) {
     await dataGastosRecurrentes.deleteGasto(req.db, { id: gastoId, user: user })
-    await dataGastos.deleteGastos({ user: user, idRecurrente: gastoId })
-    res.send('Gasto y todas sus cuotas eliminadas')
+    .then((res) => {
+      if (gastoDb.cuotas !== undefined) {
+        await dataGastos.deleteGastos(req.db, { user: user, idRecurrente: gastoId })
+        res.send('Gasto y todas sus cuotas eliminadas')
+      } else {
+        res.send('Gasto recurrente eliminado')
+      }
+    }, (err) => {
+      res.status(500).send('Algo falló')
+    })
   } else {
     res.status(403).send('Acceso denegado')
   }
