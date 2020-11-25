@@ -1,7 +1,6 @@
 var express = require('express')
 var router = express.Router()
 const dataMovimientosRecurrentes = require('../data/movimientoRecurrente')
-const dataGastosRecurrentes = require('../data/gastoRecurrente')
 const dataMovimientos = require('../data/movimiento')
 const authMiddleware = require('../middleware/auth')
 
@@ -43,7 +42,7 @@ router.get(
       }
       return movNuevo
     })
-    dataGastosRecurrentes.updateCuota(req.db)
+    dataMovimientosRecurrentes.updateCuota(req.db)
     const result = await dataMovimientos.imputarRecurrentes(req.db, nuevosMovs)
     res.json(result)
   }

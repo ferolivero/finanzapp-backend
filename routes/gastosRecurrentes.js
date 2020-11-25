@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-const dataGastosRecurrentes = require('../data/gastoRecurrente')
+const dataMovimientosRecurrentes = require('../data/movimientoRecurrente')
 const dataGastos = require('../data/gasto')
 const dataCategorias = require('../data/categoria')
 const authMiddleware = require('../middleware/auth')
@@ -8,7 +8,7 @@ const myType = 'gasto'
 
 router.get('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const result = await dataGastosRecurrentes.getAllGastos(req.db, {
+  const result = await dataMovimientosRecurrentes.getAllGastos(req.db, {
     user: user,
   })
   res.json(result)
@@ -16,7 +16,7 @@ router.get('/', authMiddleware.auth, async (req, res) => {
 
 router.get('/no-cuotas', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const result = await dataGastosRecurrentes.getAllGastos(req.db, {
+  const result = await dataMovimientosRecurrentes.getAllGastos(req.db, {
     user: user,
     cuotas: { $exists: false },
   })
@@ -29,13 +29,13 @@ router.get('/cuotas', authMiddleware.auth, async (req, res) => {
   if (req.query.soloPendientes === true) {
     filter.cuotasRestantes = { $gt: 0 }
   }
-  const result = await dataGastosRecurrentes.getAllGastos(req.db, filter)
+  const result = await dataMovimientosRecurrentes.getAllGastos(req.db, filter)
   res.json(result)
 })
 
 router.get('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const result = await dataGastosRecurrentes.getGasto(req.db, {
+  const result = await dataMovimientosRecurrentes.getGasto(req.db, {
     id: req.params.id,
     user: user,
   })
@@ -52,8 +52,8 @@ router.post('/', authMiddleware.auth, async (req, res) => {
     if (gasto.cuotas !== undefined) {
       gasto.cuotasRestantes = gasto.cuotas - 1
     }
-    const result = await dataGastosRecurrentes.pushGasto(req.db, gasto)
-    const gastoPersistido = await dataGastosRecurrentes.getGasto(req.db, {
+    const result = await dataMovimientosRecurrentes.pushGasto(req.db, gasto)
+    const gastoPersistido = await dataMovimientosRecurrentes.getGasto(req.db, {
       id: result.insertedId,
     })
     let gasto1 = {
@@ -108,22 +108,25 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 router.delete('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const gastoId = req.params.id
-  const gastoDb = await dataGastosRecurrentes.getGasto(req.db, {
+  const gastoDb = await dataMovimientosRecurrentes.getGasto(req.db, {
     id: gastoId,
     user: user,
   })
   if (gastoDb && gastoDb.user === user) {
-    await dataGastosRecurrentes.deleteGasto(req.db, { id: gastoId, user: user })
-    .then((res) => {
-      if (gastoDb.cuotas !== undefined) {
-        await dataGastos.deleteGastos(req.db, { user: user, idRecurrente: gastoId })
-        res.send('Gasto y todas sus cuotas eliminadas')
-      } else {
-        res.send('Gasto recurrente eliminado')
-      }
-    }, (err) => {
-      res.status(500).send('Algo falló')
+    const result = await dataMovimientosRecurrentes.deleteGasto(req.db, {
+      id: gastoId,
+      user: user,
     })
+    console.log('DeleteGastoRecurrente', result)
+    if (gastoDb.cuotas !== undefined && result) {
+      await dataGastos.deleteGastos(req.db, {
+        user: user,
+        idRecurrente: gastoId,
+      })
+      res.send('Gasto y todas sus cuotas eliminadas')
+    } else {
+      res.send('Gasto recurrente eliminado')
+    }
   } else {
     res.status(403).send('Acceso denegado')
   }
