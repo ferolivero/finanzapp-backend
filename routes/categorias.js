@@ -48,10 +48,15 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
 
 // Agrega una categoria
 router.post('/', authMiddleware.auth, async (req, res) => {
-  const user = authMiddleware.getUserFromRequest(req)
-  const categoria = req.body
-  categoria.user = user
+  const user = authMiddleware.getUserFromRequest(req) 
+  const categoria = {
+    user: user,
+    tipo : req.body.tipo,
+    nombre : req.body.nombre
+  }
+  console.log(categoria)
   await dataCategoria.pushCategoria(req.db, categoria)
+
   const categoriaPersistida = await dataCategoria.getCategoria(
     req.db,
     categoria._id
@@ -62,11 +67,19 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 // actualiza una categoria
 router.put('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const idCategoria = req.params.id
+  const idCategoria = {
+    id :req.params.id
+  }
   const categoriaDb = await dataCategoria.getCategoria(req.db, idCategoria)
+  
   if (categoriaDb && categoriaDb.user === user) {
-    const categoria = req.body
-    categoria._id = idCategoria
+    const categoria = {
+      id : req.params.id,
+      tipo : req.body.tipo,
+      nombre : req.body.nombre,
+      user : user,
+    }
+    console.log(categoria)
     await dataCategoria.updateCategoria(req.db, categoria)
     const result = await dataCategoria.getCategoria(req.db, idCategoria)
     res.json(result)
