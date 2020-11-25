@@ -10,42 +10,42 @@ async function getAllCategorias(connection, filter = {}) {
 }
 
 async function getCategoria(connection, filter = {}) {
-  //ACA PODRIA IR UNA LOGICA PROPIA
   return await abm.getItem(connection, myCollection, filter)
 }
-async function pushCategorias(connection, categorias){
-
-    return await abm.pushArrayItem(connection, myCollection, categorias)
-    
+async function pushCategorias(connection, categorias) {
+  return await abm.pushArrayItem(connection, myCollection, categorias)
 }
 
-
-async function pushCategoria(connection ,categoria){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.pushItem(connection , myCollection, categoria);
+async function pushCategoria(connection, categoria) {
+  return await abm.pushItem(connection, myCollection, categoria)
 }
 
-async function deleteCategoria(connection, filter = {}){
-    //ACA PODRIA IR UNA LOGICA PROPIA
-    return await abm.deleteItem(connection, myCollection, filter);
+async function deleteCategoria(connection, filter = {}) {
+  return await abm.deleteItem(connection, myCollection, filter)
 }
 
-async function updateCategoria(connection, categoria){
-   
-    const query = { _id: mongodb.ObjectID(categoria.id) }
-    const newvalues = {
-        $set: {
-        tipo : categoria.tipo,        
-        nombre: categoria.nombre,
-        user: categoria.user,
-        },
-    }
+async function updateCategoria(connection, categoria) {
+  const query = { _id: mongodb.ObjectID(categoria.id) }
+  const newvalues = {
+    $set: {
+      tipo: categoria.tipo,
+      nombre: categoria.nombre,
+      user: categoria.user,
+    },
+  }
 
-    const result = await connection
-        .db(process.env.MONGODB_DB_NAME)
-        .collection(myCollection)
-        .updateOne(query, newvalues)
-        return result
-    }
+  const result = await connection
+    .db(process.env.MONGODB_DB_NAME)
+    .collection(myCollection)
+    .updateOne(query, newvalues)
+  return result
+}
 
-module.exports = { getAllCategorias, getCategoria , pushCategorias, deleteCategoria , updateCategoria , pushCategoria}//, pushCategoria, ,  }
+module.exports = {
+  getAllCategorias,
+  getCategoria,
+  pushCategorias,
+  deleteCategoria,
+  updateCategoria,
+  pushCategoria,
+} //, pushCategoria, ,  }
