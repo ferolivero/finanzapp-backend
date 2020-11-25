@@ -69,10 +69,14 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 // actualiza una categoria
 router.put('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const idCategoria = {
-    id: req.params.id,
-  }
-  const categoriaDb = await dataCategoria.getCategoria(req.db, idCategoria)
+  const idCategoria = req.params.id
+  console.log({ idCategoria })
+  const categoriaDb = await dataCategoria.getCategoria(req.db, {
+    id: idCategoria,
+    user: user,
+  })
+
+  console.log({ categoriaDb })
 
   if (categoriaDb && categoriaDb.user === user) {
     const filter = {
@@ -82,8 +86,12 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
       user: user,
     }
 
+    console.log({ filter })
+
     await dataCategoria.updateCategoria(req.db, filter)
-    const result = await dataCategoria.getCategoria(req.db, idCategoria)
+    const result = await dataCategoria.getCategoria(req.db, {
+      id: idCategoria,
+    })
     res.json(result)
   } else {
     res.status(403).send('Acceso denegado')
@@ -94,7 +102,9 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
 router.delete('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const idCategoria = req.params.id
-  const categoriaDb = await dataCategoria.getCategoria(req.db, idCategoria)
+  const categoriaDb = await dataCategoria.getCategoria(req.db, {
+    id: idCategoria,
+  })
   if (categoriaDb && categoriaDb.user === user) {
     await dataCategoria.deleteCategoria(req.db, { id: idCategoria, user: user })
     res.status(200).send('Categoria eliminada')
