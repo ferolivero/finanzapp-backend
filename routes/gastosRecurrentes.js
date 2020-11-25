@@ -79,35 +79,43 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   }
 })
 
-// router.put('/:id', authMiddleware.auth, async (req, res) => {
-//   const user = authMiddleware.getUserFromRequest(req)
-//   const gasto = req.body
-//   gasto.user = user
-//   gasto.tipo = myType
-//   gasto._id = req.params.id
+router.put('/:id', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  const gasto = req.body
+  gasto.user = user
+  gasto.tipo = myType
+  gasto._id = req.params.id
 
-//   const gastoDb = await dataGastosRecurrentes.getGasto({
-//     id: gasto._id,
-//     user: user,
-//   })
-//   if (gastoDb && gastoDb.user === gasto.user) {
-//     const isValid = await isGastoValido(gasto)
-//     if (isValid) {
-//       await dataGastosRecurrentes.updateGasto(gasto)
-//       res.json(
-//         await dataGastosRecurrentes.getGasto({ id: gasto._id, user: user })
-//       )
-//     } else {
-//       res.status(500).send('Algún dato es incorrecto')
-//     }
-//   } else {
-//     res.status(403).send('Acceso denegado')
-//   }
-// })
+  console.log({ user })
+  console.log({ gasto })
+  const gastoDb = await dataMovimientosRecurrentes.getGasto(req.db, {
+    id: gasto._id,
+    user: user,
+  })
+
+  console.log({ gastoDb })
+  if (gastoDb && gastoDb.user === gasto.user) {
+    const isValid = await isGastoValido(req.db, gasto)
+    if (isValid) {
+      await dataMovimientosRecurrentes.updateGastoRecurrente(req.db, gasto)
+      res.json(
+        await dataMovimientosRecurrentes.getGasto(req.db, {
+          id: gasto._id,
+          user: user,
+        })
+      )
+    } else {
+      res.status(500).send('Algún dato es incorrecto')
+    }
+  } else {
+    res.status(403).send('Acceso denegado')
+  }
+})
 
 router.delete('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const gastoId = req.params.id
+  console.log('GastoId', gastoId)
   const gastoDb = await dataMovimientosRecurrentes.getGasto(req.db, {
     id: gastoId,
     user: user,

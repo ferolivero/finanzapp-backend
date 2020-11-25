@@ -1,3 +1,4 @@
+const mongodb = require('mongodb')
 const abm = require('./abm')
 const compareDates = require('./../utils/utils')
 
@@ -66,6 +67,27 @@ async function deleteGasto(connection, filter = {}) {
   return await abm.deleteItem(connection, myCollection, filter)
 }
 
+async function updateGastoRecurrente(connection, gasto) {
+  const query = { _id: mongodb.ObjectID(gasto._id) }
+  const newvalues = {
+    $set: {
+      user: gasto.user,
+      monto: gasto.monto,
+      fecha: new Date(gasto.fecha),
+      fechaImputacion: new Date(gasto.fechaImputacion),
+      descripcion: gasto.descripcion,
+      categoria: gasto.categoria,
+      tipoPago: gasto.tipoPago,
+    },
+  }
+
+  const result = await connection
+    .db(process.env.MONGODB_DB_NAME)
+    .collection(myCollection)
+    .updateOne(query, newvalues)
+  return result
+}
+
 async function updateCuota(connection) {
   const filter = {
     tipo: tipoGasto,
@@ -98,6 +120,7 @@ module.exports = {
   getAllGastos,
   getGasto,
   pushGasto,
+  updateGastoRecurrente,
   deleteGasto,
   updateCuota,
   getAllMovimientosDesc,
