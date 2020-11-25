@@ -1,3 +1,4 @@
+const mongodb = require('mongodb')
 const dotenv = require('dotenv').config()
 const abm = require('./abm')
 
@@ -25,7 +26,8 @@ async function deleteTarjeta(connection, filter = {}) {
 }
 
 async function updateTarjeta(connection, tarjeta) {
-  const query = { _id: parseInt(tarjeta._id) }
+  const query = { _id: mongodb.ObjectID(tarjeta._id) }
+  console.log({ query })
   const newvalues = {
     $set: {
       user: tarjeta.user,
@@ -33,6 +35,7 @@ async function updateTarjeta(connection, tarjeta) {
       descripcion: tarjeta.descripcion,
     },
   }
+  console.log({ newvalues })
 
   const result = await connection
     .db(process.env.MONGODB_DB_NAME)

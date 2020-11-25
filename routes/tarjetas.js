@@ -25,9 +25,11 @@ router.post('/', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const tarjeta = req.body
   tarjeta.user = user
-  if (await isTarjetaValida(tarjeta)) {
-    await dataTarjeta.pushTarjeta(req.db, tarjeta)
-    const tarjetaPersistida = await dataTarjeta.getTarjeta(req.db, tarjeta._id)
+  if (isTarjetaValida(tarjeta)) {
+    const result = await dataTarjeta.pushTarjeta(req.db, tarjeta)
+    const tarjetaPersistida = await dataTarjeta.getTarjeta(req.db, {
+      id: result.insertedId,
+    })
     res.json(tarjetaPersistida)
   } else {
     res.status(500).send('Algun dato es incorrecto')
@@ -41,14 +43,19 @@ router.put('/:id', authMiddleware.auth, async (req, res) => {
   tarjeta.user = user
   tarjeta._id = req.params.id
 
-  const tarjetaDb = dataTarjeta.getTarjeta(req.db, {
+  console.log({ tarjeta })
+
+  const tarjetaDb = await dataTarjeta.getTarjeta(req.db, {
     id: tarjeta._id,
     user: user,
   })
+
+  console.log({ tarjetaDb })
   if (tarjetaDb && tarjetaDb.user === tarjeta.user) {
-    if (await isTarjetaValida(tarjeta)) {
+    if (isTarjetaValida(tarjeta)) {
       await dataTarjeta.updateTarjeta(req.db, tarjeta)
-      const result = await dataTarjeta.getTarjeta(req.db, req.params.id)
+      const result = await dataTarjeta.getTarjeta(req.db, { id: req.params.id })
+      console.log({ result })
       res.json(result)
     } else {
       res.status(500).send('Algun dato es incorrecto')
@@ -74,12 +81,8 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-async function isTarjetaValida(tarjeta) {
-  if (tarjeta.nombre !== null) {
-    return true
-  }
-
-  return false
+function isTarjetaValida(tarjeta) {
+  return tarjeta.nombre
 }
 
 module.exports = router
