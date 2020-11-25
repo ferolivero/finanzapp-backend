@@ -14,10 +14,9 @@ router.get('/', authMiddleware.auth, async (req, res) => {
   res.json(result)
 })
 
-router.get(
-  '/generar',
-  /*authMiddleware.auth,*/ async (req, res) => {
-    //const user = authMiddleware.getUserFromRequest(req)
+router.get('/generar', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  if (user) {
     const movsRecurrentes = await dataMovimientosRecurrentes.getAllMovimientosDesc(
       req.db
     )
@@ -45,7 +44,9 @@ router.get(
     dataMovimientosRecurrentes.updateCuota(req.db)
     const result = await dataMovimientos.imputarRecurrentes(req.db, nuevosMovs)
     res.json(result)
+  } else {
+    res.status(403).send('Acceso denegado')
   }
-)
+})
 
 module.exports = router
