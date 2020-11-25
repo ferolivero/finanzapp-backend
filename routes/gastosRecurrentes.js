@@ -11,7 +11,12 @@ router.get('/', authMiddleware.auth, async (req, res) => {
   const result = await dataMovimientosRecurrentes.getAllGastos(req.db, {
     user: user,
   })
-  res.json(result)
+
+  if (result && result.user === user) {
+    res.json(result)
+  } else {
+    res.status(403).send('Acceso denegado')
+  }
 })
 
 router.get('/no-cuotas', authMiddleware.auth, async (req, res) => {
@@ -39,7 +44,12 @@ router.get('/:id', authMiddleware.auth, async (req, res) => {
     id: req.params.id,
     user: user,
   })
-  res.json(result)
+
+  if (result && result.user === user) {
+    res.json(result)
+  } else {
+    res.status(403).send('Acceso denegado')
+  }
 })
 
 router.post('/', authMiddleware.auth, async (req, res) => {
