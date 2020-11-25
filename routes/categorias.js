@@ -36,7 +36,7 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
   if (await isTipoValido(tipo)) {
     const user = authMiddleware.getUserFromRequest(req)
     const result = await dataCategoria.getCategoria(req.db, {
-      id: id,
+      id: req.params.id,
       user: user,
       tipo: tipo,
     })
@@ -48,13 +48,17 @@ router.get('/:tipo/:id', authMiddleware.auth, async (req, res) => {
 
 // Agrega una categoria
 router.post('/', authMiddleware.auth, async (req, res) => {
-  const user = authMiddleware.getUserFromRequest(req)
-  const categoria = req.body
-  categoria.user = user
-  await dataCategoria.pushCategoria(req.db, categoria)
+  const user = authMiddleware.getUserFromRequest(req) 
+  const filter = {
+    user: user,
+    tipo : req.body.tipo,
+    nombre : req.body.nombre
+  }
+  const result = await dataCategoria.pushCategoria(req.db, filter)
+
   const categoriaPersistida = await dataCategoria.getCategoria(
     req.db,
-    categoria._id
+    { id: result.insertedId }
   )
   res.json(categoriaPersistida)
 })
@@ -62,12 +66,20 @@ router.post('/', authMiddleware.auth, async (req, res) => {
 // actualiza una categoria
 router.put('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
-  const idCategoria = req.params.id
+  const idCategoria = {
+    id :req.params.id
+  }
   const categoriaDb = await dataCategoria.getCategoria(req.db, idCategoria)
+  
   if (categoriaDb && categoriaDb.user === user) {
-    const categoria = req.body
-    categoria._id = idCategoria
-    await dataCategoria.updateCategoria(req.db, categoria)
+    const filter = {
+      id : req.params.id,
+      tipo : req.body.tipo,
+      nombre : req.body.nombre,
+      user : user,
+    }
+
+    await dataCategoria.updateCategoria(req.db, filter)
     const result = await dataCategoria.getCategoria(req.db, idCategoria)
     res.json(result)
   } else {

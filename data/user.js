@@ -17,4 +17,6 @@ async function deleteUsuario(connection, filter = {}) {
   return await abm.deleteItem(connection, myCollection, filter)
 }
 
+
+
 module.exports = { getUsuario, pushUsuario, deleteUsuario }
