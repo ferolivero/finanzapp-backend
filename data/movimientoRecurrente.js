@@ -1,6 +1,6 @@
 const mongodb = require('mongodb')
 const abm = require('./abm')
-const compareDates = require('./../utils/utils')
+const { compareDates } = require('./../utils/utils')
 
 const myCollection = 'movimientosRecurrentes'
 const tipoIngreso = 'ingreso'
