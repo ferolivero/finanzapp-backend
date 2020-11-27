@@ -29,6 +29,41 @@ router.get('/mes/:mes', authMiddleware.auth, async (req, res) => {
   }
 })
 
+router.get('/balance/:mes', authMiddleware.auth, async (req, res) => {
+  const user = authMiddleware.getUserFromRequest(req)
+  console.log('user', user)
+  let mes = req.params.mes
+  if (isMesValid(mes)) {
+    const filterMes = filterCreatorMes(mes)
+    console.log(filterMes)
+    const result = await dataMovimientos
+      .getAllMovimientosDesc(req.db, {
+        user: user,
+        fecha: filterMes,
+      })
+      .then((data) => {
+        let gastos = 0
+        let ingresos = 0
+        data.forEach((mov) => {
+          if (mov.tipo === 'gasto') {
+            gastos += mov.monto
+          } else if (mov.tipo === 'ingreso') {
+            ingresos += mov.monto
+          }
+        })
+        return {
+          gastos: gastos,
+          ingresos: ingresos,
+          balance: ingresos - gastos,
+          mes: mes,
+        }
+      })
+    res.json(result)
+  } else {
+    res.status(500).send('Fecha inválida')
+  }
+})
+
 //Trae un movimiento determinado por ID, debe chequear que sea de ese usuario
 router.get('/:id', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
