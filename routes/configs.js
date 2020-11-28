@@ -14,12 +14,19 @@ router.get('/user', authMiddleware.auth, async (req, res) => {
 router.put('/user', authMiddleware.auth, async (req, res) => {
   const user = authMiddleware.getUserFromRequest(req)
   const userBody = req.body
-  const userDb = await userData.getUsuario(req.db, {
-    id: user,
-  })
-  if (userDb) {
-    await userData.updateUsuario(req.db, userBody)
-    res.json(await userData.getUsuario(req.db, { id: user }))
+  if (user === userBody._id) {
+    const userDb = await userData.getUsuario(req.db, {
+      id: user,
+    })
+
+    console.log(userDb._id)
+    console.log(user)
+    if (userDb && userDb._id === user) {
+      await userData.updateUsuario(req.db, userBody)
+      res.json(await userData.getUsuario(req.db, { id: user }))
+    } else {
+      res.status(403).send('Acceso denegado')
+    }
   } else {
     res.status(403).send('Acceso denegado')
   }

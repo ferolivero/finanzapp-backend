@@ -1,4 +1,3 @@
-const mongodb = require('mongodb')
 const dotenv = require('dotenv').config()
 const abm = require('./abm')
 
@@ -14,7 +13,7 @@ async function pushUsuario(connection, usuario) {
 }
 
 async function updateUsuario(connection, usuario) {
-  const query = { _id: mongodb.ObjectID(usuario._id) }
+  const query = { _id: usuario._id }
   const newvalues = {
     $set: {
       moneda: usuario.moneda,
