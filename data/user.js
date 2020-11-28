@@ -11,8 +11,24 @@ async function pushUsuario(connection, usuario) {
   return await abm.pushItem(connection, myCollection, usuario)
 }
 
+async function updateUsuario(connection, usuario) {
+  const query = { _id: mongodb.ObjectID(usuario._id) }
+  const newvalues = {
+    $set: {
+      moneda: usuario.moneda,
+    },
+  }
+  console.log({ newvalues })
+
+  const result = await connection
+    .db(process.env.MONGODB_DB_NAME)
+    .collection(myCollection)
+    .updateOne(query, newvalues)
+  return result
+}
+
 async function deleteUsuario(connection, filter = {}) {
   return await abm.deleteItem(connection, myCollection, filter)
 }
 
-module.exports = { getUsuario, pushUsuario, deleteUsuario }
+module.exports = { getUsuario, pushUsuario, updateUsuario, deleteUsuario }
