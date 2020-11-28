@@ -1,3 +1,5 @@
+const mongodb = require('mongodb')
+const dotenv = require('dotenv').config()
 const abm = require('./abm')
 
 //ACÁ VA EL NOMBRE DE LA COLECCION CON LA QUE VAMOS A TRABAJAR
