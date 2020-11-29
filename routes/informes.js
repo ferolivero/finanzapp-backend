@@ -88,7 +88,7 @@ function extraerValorPorMes(result, nombresMeses) {
 
   const valorCategorias = {
     labels: nombresMeses,
-    datasets: [{ data: valorDeCadaMes }],
+    datasets: { data: valorDeCadaMes },
   }
   return valorCategorias
 }
